@@ -1,0 +1,192 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"math/rand"
+	"sync/atomic"
+)
+import _ `github.com/lib/pq` 
+
+const SLOW_DATABASE = 20 // set to 1 for fast database
+const DELAY_SEARCH = 8 // set to seconds required for first insert passed
+
+var highest_user_id = int64(1)
+
+func main() {
+	var err error
+	db, err = sql.Open(`postgres`, `host=127.0.0.1 user=crate dbname=b1 sslmode=disable`)
+	PanicIf(err)
+	PREFIX = `Crate`
+	InitTables()
+	go RunThread(KEY_InsertUsersItems,INSERT_USERS, InsertUsersItems)
+	go RunThread(KEY_UpdateItemsAmounts,SEARCH_USER, SearchUserUpdateItemsAmounts)
+	go RunThread(KEY_SearchRelsAddBonds, SEARCH_RELS, SearchRelsAddBonds)
+	go RunThread(KEY_RandomSearchItems, SEARCH_ITEM, RandomSearchItems)
+	
+	Report()
+	defer db.Close()
+}
+
+func RandomSearchItems(n int) {
+	query := `SELECT typ, amount FROM items WHERE user_id = $1`
+	stmt, err := db.Prepare(query)
+	defer stmt.Close()
+	user_id := rand.Int() % int(highest_user_id)
+	rows, err := stmt.Query(user_id)
+	if NoError(err) {
+		defer rows.Close()
+		for rows.Next() {
+			var str string
+			var am int
+			err = rows.Scan(&str, &am)
+			if NoError(err) {
+				atomic.AddInt64(&ITEMS_LIST,1)
+			}
+		}
+	}
+}
+
+func SearchRelsAddBonds(n int) {
+	query := `SELECT user_lo FROM b1.rels WHERE user_hi = $1 UNION ALL SELECT user_hi FROM b1.rels WHERE user_lo = $1`
+	stmt, err := db.Prepare(query)
+	PanicIf(err)
+	defer stmt.Close()
+	user_id := rand.Int() % int(highest_user_id)
+	rows, err := stmt.Query(user_id)
+	if NoError(err) {
+		defer rows.Close()
+		var friend_id int
+		for rows.Next() {
+			atomic.AddInt64(&RELS_SEL, 1)
+			err = rows.Scan(&friend_id)
+			if NoError(err) && RELS_SEL % 2 == 0 {
+				user_hi := user_id
+				user_lo := friend_id
+				if user_hi < user_lo {
+					user_hi, user_lo = user_lo, user_hi
+				}
+				query = `UPDATE b1.rels SET bond = bond + 1 WHERE user_lo = $1 AND user_hi = $2`
+				_, err = db.Exec(query,user_lo, user_hi)
+				if NoError(err) {
+					atomic.AddInt64(&RELS_UPD, 1)					
+				}
+			}
+		}
+	}
+}
+
+func SearchUserUpdateItemsAmounts(n int) {
+	query := `SELECT id FROM b1.users WHERE uniq = $1`
+	stmt, err := db.Prepare(query)
+	PanicIf(err)
+	defer stmt.Close()
+	r := rand.Int() % int(highest_user_id)
+	uniq := UniqString(r)
+	user_id := 0
+	err = stmt.QueryRow(uniq).Scan(&user_id)
+	if NoError(err) {
+		atomic.AddInt64(&USERS_SEL,1)
+	}
+	
+	// random 3 item 
+	idxs := [ITEM_PER_SEARCH]int{}
+	for t := 0 ; t< ITEM_PER_SEARCH ; {
+		idx := rand.Int() % len(item_list)
+		x := 0
+		for x < t {
+			if idxs[x] == idx {
+				idx = rand.Int() % len(item_list)
+				continue
+			}
+			x++
+		}
+		idxs[t] = idx
+		t++
+	}
+	query = `SELECT amount FROM b1.items WHERE user_id = $1 AND typ = $2`
+	stmt2, err := db.Prepare(query)
+	PanicIf(err)
+	defer stmt2.Close()
+	var amount int // dummy
+	for _, idx := range idxs {
+		err = stmt2.QueryRow(user_id, item_list[idx]).Scan(&amount)
+		if NoError(err) {
+			atomic.AddInt64(&ITEMS_SEL,1)
+		}
+	}
+	
+	// without transaction to make it fair with other databases
+	for _, idx := range idxs {
+		rs, err := db.Exec(fmt.Sprintf(`UPDATE b1.items SET amount = amount + (%d) WHERE user_id = %d AND typ = '%s'`, rand.Int() % 10 - 3, user_id, item_list[idx]))
+		if NoError(err) {
+			num, _ := rs.RowsAffected()
+			atomic.AddInt64(&ITEMS_UPD,num)
+		}
+	}
+}
+
+func InsertUsersItems(n int) {
+	query := `INSERT INTO b1.users(id,uniq) VALUES ($1,$2)`
+	stmt, err := db.Prepare(query)
+	PanicIf(err)
+	uniq := UniqString(n)
+	user_id := atomic.AddInt64(&highest_user_id,1)
+	_, err = stmt.Exec(user_id,uniq)
+	if NoError(err) {
+		atomic.AddInt64(&USERS_INS,1)
+	}
+	defer stmt.Close()
+	for _, item := range item_list {
+		query = `INSERT INTO b1.items (user_id, typ, amount) VALUES($1, $2, $3)`
+		_, err = db.Exec(query, user_id, item, rand.Int()%100)
+		if NoError(err) {
+			atomic.AddInt64(&ITEMS_INS,1)
+		}
+	}
+
+	delta := INSERT_USERS / PROGRESS_TICK
+	if n > delta {
+		for r := 0; r < RELS_PER_USER; r++ { 
+			lo := int(user_id) - delta + rand.Int() % delta
+			hi := user_id
+			query = `INSERT INTO b1.rels(user_lo,user_hi, bond) VALUES($1,$2,$3)`
+			_, err = db.Exec(query, lo,hi, 0)
+			if NoError(err) {
+				atomic.AddInt64(&RELS_INS,1)
+			}
+		}
+	}
+}
+
+
+func InitTables() {
+	_, err := db.Exec(`DROP TABLE IF EXISTS b1.users`)
+	NoError(err)
+	_, err = db.Exec(`DROP TABLE IF EXISTS b1.items`)
+	NoError(err)
+	_, err = db.Exec(`DROP TABLE IF EXISTS b1.rels`)
+	NoError(err)
+	_, err = db.Exec(`CREATE TABLE b1.users(
+   id INT PRIMARY KEY
+	, uniq STRING PRIMARY KEY
+	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
+)`)
+	PanicIf(err)
+	_, err = db.Exec(`CREATE TABLE b1.items(
+	user_id INT 
+	, typ STRING
+	, amount INT 
+	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
+	, PRIMARY KEY(user_id, typ)
+)`)
+	PanicIf(err)
+	_, err = db.Exec(`CREATE TABLE b1.rels(
+	user_lo INT 
+	, user_hi INT
+	, bond INT 
+	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
+	, PRIMARY KEY(user_lo, user_hi)
+)`)
+	PanicIf(err)
+}
