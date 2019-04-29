@@ -161,32 +161,26 @@ func InsertUsersItems(n int) {
 
 
 func InitTables() {
-	_, err := db.Exec(`DROP TABLE IF EXISTS b1.users`)
-	NoError(err)
-	_, err = db.Exec(`DROP TABLE IF EXISTS b1.items`)
-	NoError(err)
-	_, err = db.Exec(`DROP TABLE IF EXISTS b1.rels`)
-	NoError(err)
-	_, err = db.Exec(`CREATE TABLE b1.users(
+	DdlNoError(`DROP TABLE IF EXISTS users`)
+	DdlNoError(`DROP TABLE IF EXISTS items`)
+	DdlNoError(`DROP TABLE IF EXISTS rels`)
+	DdlPanicIf(`CREATE TABLE b1.users(
    id INT PRIMARY KEY
 	, uniq STRING PRIMARY KEY
 	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
 )`)
-	PanicIf(err)
-	_, err = db.Exec(`CREATE TABLE b1.items(
+	DdlPanicIf(`CREATE TABLE b1.items(
 	user_id INT 
 	, typ STRING
 	, amount INT 
 	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
 	, PRIMARY KEY(user_id, typ)
 )`)
-	PanicIf(err)
-	_, err = db.Exec(`CREATE TABLE b1.rels(
+	DdlPanicIf(`CREATE TABLE b1.rels(
 	user_lo INT 
 	, user_hi INT
 	, bond INT 
 	, created_at TIMESTAMP GENERATED ALWAYS AS CURRENT_TIMESTAMP
 	, PRIMARY KEY(user_lo, user_hi)
 )`)
-	PanicIf(err)
 }

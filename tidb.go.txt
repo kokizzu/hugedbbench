@@ -15,9 +15,9 @@ var highest_user_id = 0
 
 func main() {
 	var err error
-	db, err = sql.Open(`mysql`, `b1:b1@tcp(127.0.0.1:3306)/b1`)
+	db, err = sql.Open(`mysql`, `root@tcp(127.0.0.1:4000)/b1`)
 	PanicIf(err)
-	PREFIX = `My`
+	PREFIX = `Ti`
 	InitTables()
 	go RunThread(KEY_InsertUsersItems,INSERT_USERS, InsertUsersItems)
 	go RunThread(KEY_UpdateItemsAmounts,SEARCH_USER, SearchUserUpdateItemsAmounts)

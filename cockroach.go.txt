@@ -165,19 +165,15 @@ func InsertUsersItems(n int) {
 
 
 func InitTables() {
-	_, err := db.Exec(`DROP TABLE IF EXISTS users`)
-	NoError(err)
-	_, err = db.Exec(`DROP TABLE IF EXISTS items`)
-	NoError(err)
-	_, err = db.Exec(`DROP TABLE IF EXISTS rels`)
-	NoError(err)
-	_, err = db.Exec(`CREATE TABLE users(
+	DdlNoError(`DROP TABLE IF EXISTS users`)
+	DdlNoError(`DROP TABLE IF EXISTS items`)
+	DdlNoError(`DROP TABLE IF EXISTS rels`)
+	DdlPanicIf(`CREATE TABLE users(
    id SERIAL PRIMARY KEY
 	, uniq VARCHAR(64) UNIQUE
 	, created_at TIMESTAMP DEFAULT Now() 
 )`)
-	PanicIf(err)
-	_, err = db.Exec(`CREATE TABLE items(
+	DdlPanicIf(`CREATE TABLE items(
    id BIGSERIAL PRIMARY KEY
 	, user_id INT -- REFERENCES users(id)
 	, typ VARCHAR(16)
@@ -185,8 +181,7 @@ func InitTables() {
 	, created_at TIMESTAMP DEFAULT Now()
 	, UNIQUE(user_id, typ)
 )`)
-	PanicIf(err)
-	_, err = db.Exec(`CREATE TABLE rels(
+	DdlPanicIf(`CREATE TABLE rels(
    id BIGSERIAL PRIMARY KEY
 	, user_lo INT -- REFERENCES users(id)
 	, user_hi INT -- REFERENCES users(id)
@@ -194,5 +189,4 @@ func InitTables() {
 	, created_at TIMESTAMP DEFAULT Now()
 	, UNIQUE(user_lo, user_hi)
 )`)
-	PanicIf(err)
 }

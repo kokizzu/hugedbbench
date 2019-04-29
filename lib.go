@@ -101,3 +101,14 @@ func RunThread(name string, num int, lambda func(num int)) {
 	fmt.Printf("[%s] %s completed..\n", PREFIX, name)
 	wg.Done()
 }
+
+func DdlNoError(query string) {
+	fmt.Println(query)
+	_, err := db.Exec(query)
+	NoError(err)
+}
+func DdlPanicIf(query string) {
+	fmt.Println(query)
+	_, err := db.Exec(query)
+	PanicIf(err)
+}
