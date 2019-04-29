@@ -80,6 +80,13 @@ func NoError(err error) bool {
 	}
 	return true
 }
+func NoError2(err error, query string) bool {
+	if err != nil {
+		fmt.Printf("[%s] %s: %s\n", PREFIX, err, query)
+		return false
+	}
+	return true
+}
 
 func RunThread(name string, num int, lambda func(num int)) {
 	wg.Add(1)
