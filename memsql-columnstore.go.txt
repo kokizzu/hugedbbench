@@ -8,7 +8,7 @@ import (
 )
 import _ "github.com/go-sql-driver/mysql"
 
-const SLOW_DATABASE = 1 // 20 // set to 1 for fast database
+const SLOW_DATABASE = 20 // set to 1 for fast database
 const DELAY_SEARCH = 2 // set to seconds required for first insert passed
 
 var highest_user_id = 0
@@ -91,7 +91,6 @@ func SearchUserUpdateItemsAmounts(n int) {
 	
 	// random 3 item 
 	idxs := [ITEM_PER_SEARCH]int{}
-	row_ids := [ITEM_PER_SEARCH]int{}
 	for t := 0 ; t< ITEM_PER_SEARCH ; {
 		idx := rand.Int() % len(item_list)
 		x := 0
@@ -105,21 +104,21 @@ func SearchUserUpdateItemsAmounts(n int) {
 		idxs[t] = idx
 		t++
 	}
-	query = `SELECT id, amount FROM items WHERE user_id = ? AND typ = ?`
+	query = `SELECT amount FROM items WHERE user_id = ? AND typ = ?`
 	stmt2, err := db.Prepare(query)
 	PanicIf(err)
 	defer stmt2.Close()
 	var amount int // dummy
-	for k, idx := range idxs {
-		err = stmt2.QueryRow(user_id, item_list[idx]).Scan(&row_ids[k], &amount)
+	for _, idx := range idxs {
+		err = stmt2.QueryRow(user_id, item_list[idx]).Scan(&amount)
 		if NoError(err) {
 			atomic.AddInt64(&ITEMS_SEL,1)
 		}
 	}
 	
 	// without transaction to make it fair with other databases
-	for _, row_id := range row_ids {
-		rs, err := db.Exec(fmt.Sprintf(`UPDATE items SET amount = amount + (%d) WHERE id = %d`, rand.Int() % 10 - 3, row_id))
+	for _, idx := range idxs {
+		rs, err := db.Exec(fmt.Sprintf(`UPDATE items SET amount = amount + (%d) WHERE user_id = ? AND typ = ?`, rand.Int() % 10 - 3), user_id, item_list[idx])
 		if NoError(err) {
 			num, _ := rs.RowsAffected()
 			atomic.AddInt64(&ITEMS_UPD,num)
@@ -175,28 +174,29 @@ func InitTables() {
    id INT AUTO_INCREMENT
 	, uniq VARCHAR(64)
 	, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	, UNIQUE(uniq)
-	, KEY(id)
-	, PRIMARY KEY (uniq)
+	-- , UNIQUE(uniq)
+	, KEY(id) USING CLUSTERED COLUMNSTORE
+	-- , PRIMARY KEY (uniq)
+	, SHARD KEY (uniq)
 )`)
 	DdlPanicIf(`CREATE TABLE items(
-   id INT AUTO_INCREMENT 
-	, user_id INT -- REFERENCES users(id)
+   /*id INT AUTO_INCREMENT 
+	,*/ user_id INT -- REFERENCES users(id)
 	, typ VARCHAR(16)
 	, amount INT DEFAULT 0
 	, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	, UNIQUE(user_id, typ)
-	, KEY(id)
+	-- , UNIQUE(user_id, typ)
+	, KEY(user_id, typ) USING CLUSTERED COLUMNSTORE
 	, SHARD KEY (user_id, typ)
 )`)
 	DdlPanicIf(`CREATE TABLE rels(
-   id INT AUTO_INCREMENT 
-	, user_lo INT -- REFERENCES users(id)
+   /*id INT AUTO_INCREMENT 
+	,*/ user_lo INT -- REFERENCES users(id)
 	, user_hi INT -- REFERENCES users(id)
 	, bond INT DEFAULT 0
 	, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	, UNIQUE(user_lo, user_hi)
-	, KEY(id)
+	-- , UNIQUE(user_lo, user_hi)
+	, KEY(user_lo, user_hi) USING CLUSTERED COLUMNSTORE
 	, SHARD KEY (user_lo, user_hi)
 )`)
 }
