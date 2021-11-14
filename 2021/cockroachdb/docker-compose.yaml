@@ -1,0 +1,13 @@
+version: "3.5"
+
+# https://github.com/alexmacarthur/local-docker-db/blob/master/cockroach/docker-compose.yml
+
+services:
+  cockroach:
+    image: cockroachdb/cockroach:latest
+    volumes:
+       - ./cockroach1:/cockroach/cockroach-data
+    command: start-single-node --insecure --accept-sql-without-tls
+    ports:
+       - "26257:26257"
+       - "8080:8080"

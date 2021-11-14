@@ -1,1 +1,11 @@
 .idea
+cockroach1
+ybmaster1
+ybtserver1
+tipd0
+tipd1
+tipd2
+tikv0
+tikv1
+tikv2
+logs
