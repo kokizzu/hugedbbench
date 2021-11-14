@@ -1,0 +1,34 @@
+version: "3.5"
+
+# https://github.com/alexmacarthur/local-docker-db/blob/master/cockroach/docker-compose.yml
+
+services:
+  cockroach1:
+    image: cockroachdb/cockroach:latest
+    container_name: roach1
+    volumes:
+       - ./cockroach1:/cockroach/cockroach-data
+    command: start --insecure --accept-sql-without-tls --join=roach1,roach2,roach3
+    ports:
+       - "16257:26257"
+       - "8081:8080"
+  cockroach2:
+    image: cockroachdb/cockroach:latest
+    container_name: roach2
+    volumes:
+       - ./cockroach2:/cockroach/cockroach-data
+    command: start --insecure --accept-sql-without-tls --join=roach1,roach2,roach3
+    ports:
+       - "26257:26257"
+       - "8082:8080"
+  cockroach3:
+    image: cockroachdb/cockroach:latest
+    container_name: roach3
+    volumes:
+       - ./cockroach3:/cockroach/cockroach-data
+    command: start --insecure --accept-sql-without-tls --join=roach1,roach2,roach3
+    ports:
+       - "36257:26257"
+       - "8083:8080"
+
+# manual run after start: docker exec -it roach1 ./cockroach init --insecure

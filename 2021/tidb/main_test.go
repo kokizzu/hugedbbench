@@ -16,6 +16,9 @@ import (
 	"github.com/kokizzu/id64"
 )
 
+// docker-compose -f docker-compose-single.yaml up --remove-orphans
+// docker-compose -f docker-compose-multi.yaml up --remove-orphans
+
 const DbName = `TiDB`
 const GoRoutineCount = 1000
 const RecordsPerGoroutine = 100

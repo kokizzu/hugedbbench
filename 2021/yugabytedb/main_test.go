@@ -19,6 +19,9 @@ const DbName = `YugaByteDB`
 const GoRoutineCount = 1000
 const RecordsPerGoroutine = 100
 
+// docker-compose -f docker-compose-single.yaml up --remove-orphans
+// docker-compose -f docker-compose-multi.yaml up --remove-orphans
+
 func TestDb(t *testing.T) {
 	start := time.Now()
 	defer func(start time.Time) {

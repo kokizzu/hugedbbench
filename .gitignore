@@ -1,7 +1,11 @@
 .idea
 cockroach1
+cockroach2
+cockroach3
 ybmaster1
 ybtserver1
+ybtserver2
+ybtserver3
 tipd0
 tipd1
 tipd2
