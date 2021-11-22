@@ -13,3 +13,11 @@ tikv0
 tikv1
 tikv2
 logs
+redpanda1
+redpanda2
+redpanda3
+zkdata1
+zklog1
+kafkadata1
+kafkadata2
+kafkadata3
