@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-const PRODUCERS = 1000
-const MSGS = 2000 // x PRODUCERS
+const PRODUCERS = 100
+const MSGS = 20000 // x PRODUCERS
 const CONSUMERS = 100
 const TOPIC = `foo`
 const PROGRESS = 100

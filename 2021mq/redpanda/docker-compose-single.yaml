@@ -5,9 +5,8 @@ services:
     command:
       - redpanda
       - start
-      - --overprovisioned
       - --smp
-      - "32"
+      - "1"
       - --node-id
       - '0'
       - --set
