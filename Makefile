@@ -18,3 +18,7 @@ clean-2021mq:
 	sudo rm -rf $(wildcard 2021mq/nats-jetstream/*/)
 	sudo du -hs $(wildcard 2021mq/redpanda/*/)
 	sudo rm -rf $(wildcard 2021mq/redpanda/*/)
+	sudo du -hs $(wildcard 2021mq/tidbAsQ/ti*/)
+	sudo rm -rf $(wildcard 2021mq/tidbAsQ/ti*/)
+	sudo du -hs $(wildcard 2021mq/tarantoolAsQ/*/)
+	sudo rm -rf $(wildcard 2021mq/tarantoolAsQ/*/)

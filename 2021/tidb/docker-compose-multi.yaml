@@ -6,7 +6,7 @@ services:
     ports:
       - "2379"
     volumes:
-      - ./config/pd.toml:/pd.toml:ro
+      - ./pd.toml:/pd.toml:ro
       - ./tipd0:/data
       - ./logs:/logs
     command:
@@ -26,7 +26,7 @@ services:
     ports:
       - "2379"
     volumes:
-      - ./config/pd.toml:/pd.toml:ro
+      - ./pd.toml:/pd.toml:ro
       - ./tipd1:/data
       - ./logs:/logs
     command:
@@ -46,7 +46,7 @@ services:
     ports:
       - "2379"
     volumes:
-      - ./config/pd.toml:/pd.toml:ro
+      - ./pd.toml:/pd.toml:ro
       - ./tipd2:/data
       - ./logs:/logs
     command:
@@ -64,7 +64,7 @@ services:
   tikv0:
     image: pingcap/tikv:latest
     volumes:
-      - ./config/tikv.toml:/tikv.toml:ro
+      - ./tikv.toml:/tikv.toml:ro
       - ./tikv0:/data
       - ./logs:/logs
     command:
@@ -83,7 +83,7 @@ services:
   tikv1:
     image: pingcap/tikv:latest
     volumes:
-      - ./config/tikv.toml:/tikv.toml:ro
+      - ./tikv.toml:/tikv.toml:ro
       - ./tikv1:/data
       - ./logs:/logs
     command:
@@ -102,7 +102,7 @@ services:
   tikv2:
     image: pingcap/tikv:latest
     volumes:
-      - ./config/tikv.toml:/tikv.toml:ro
+      - ./tikv.toml:/tikv.toml:ro
       - ./tikv2:/data
       - ./logs:/logs
     command:
@@ -124,7 +124,7 @@ services:
       - "4000:4000"
       - "10081:10080"
     volumes:
-      - ./config/tidb.toml:/tidb.toml:ro
+      - ./tidb.toml:/tidb.toml:ro
       - ./logs:/logs
     command:
       - --store=tikv
