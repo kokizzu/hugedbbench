@@ -1,0 +1,110 @@
+# https://github.com/vectorizedio/chaos/blob/main/docker/docker-compose.yaml
+version: '3'
+services:
+  redpanda1:
+    image: docker.vectorized.io/vectorized/redpanda:latest
+    privileged: true
+    container_name: redpanda1
+    hostname: redpanda1
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "32"
+      - --node-id
+      - '0'
+      - --set
+      - redpanda.auto_create_topics_enabled=true
+      - --pandaproxy-addr
+      - 0.0.0.0:8082
+      - --advertise-pandaproxy-addr
+      - 127.0.0.1:8082
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --rpc-addr
+      - 0.0.0.0:33145
+      - --advertise-rpc-addr
+      - redpanda1:33145
+    ports:
+      - 8082:8082
+      - 9092:9092
+      - 29092:29092
+    volumes:
+      - ./redpanda1:/var/lib/redpanda
+  redpanda2:
+    image: docker.vectorized.io/vectorized/redpanda:latest
+    depends_on:
+      - "redpanda1"
+    privileged: true
+    container_name: redpanda2
+    hostname: redpanda2
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "32"
+      - --node-id
+      - '1'
+      - --set
+      - redpanda.auto_create_topics_enabled=true
+      - --pandaproxy-addr
+      - 0.0.0.0:8083
+      - --advertise-pandaproxy-addr
+      - 127.0.0.1:8083
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29093,OUTSIDE://localhost:9093
+      - --rpc-addr
+      - 0.0.0.0:33146
+      - --advertise-rpc-addr
+      - redpanda2:33146
+      - --seeds
+      - redpanda1:33145
+    ports:
+      - 8083:8083
+      - 9093:9093
+      - 29093:29093
+    volumes:
+      - ./redpanda2:/var/lib/redpanda
+  redpanda3:
+    image: docker.vectorized.io/vectorized/redpanda:latest
+    depends_on:
+      - "redpanda1"
+    privileged: true
+    container_name: redpanda3
+    hostname: redpanda3
+    volumes:
+      - ./redpanda3:/var/lib/redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "32"
+      - --node-id
+      - '2'
+      - --set
+      - redpanda.auto_create_topics_enabled=true
+      - --pandaproxy-addr
+      - 0.0.0.0:8084
+      - --advertise-pandaproxy-addr
+      - 127.0.0.1:8084
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29094,OUTSIDE://0.0.0.0:9094
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29094,OUTSIDE://localhost:9094
+      - --rpc-addr
+      - 0.0.0.0:33147
+      - --advertise-rpc-addr
+      - redpanda3:33147
+      - --seeds
+      - redpanda1:33145
+    ports:
+      - 8084:8084
+      - 9094:9094
+      - 29094:29094

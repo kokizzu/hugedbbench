@@ -16,6 +16,7 @@ require (
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
 	github.com/jackc/puddle v1.1.3 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kokizzu/gotro v1.1018.858 // indirect
 	github.com/kokizzu/id64 v1.1114.1245 // indirect
 	github.com/kpango/fastime v1.0.17 // indirect
@@ -24,9 +25,13 @@ require (
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
+	github.com/pierrec/lz4/v4 v4.1.11 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/twmb/franz-go v1.2.4 // indirect
+	github.com/twmb/franz-go/pkg/kmsg v0.0.0-20211118234851-03c58cbf39e9 // indirect
+	github.com/twmb/go-rbtree v1.0.0 // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
 	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
