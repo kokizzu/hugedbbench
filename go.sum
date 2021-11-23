@@ -674,8 +674,8 @@ github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38/go.
 github.com/kokizzu/goproc v1.625.1807/go.mod h1:LIu3R/6UUBVz9J/KZPkONmd/LoANaP8SZIUCi5qcugU=
 github.com/kokizzu/gotro v1.410.2358/go.mod h1:S3go3s6wxewdqc1VZ3jSyQVxUBxBdse3KdrgqN7LPRs=
 github.com/kokizzu/gotro v1.625.1808/go.mod h1:S3go3s6wxewdqc1VZ3jSyQVxUBxBdse3KdrgqN7LPRs=
-github.com/kokizzu/gotro v1.1122.1919 h1:WdzA/Xw64XGIf9DZ85sYWjFWbAEhHAL2nIeidD4CS+4=
-github.com/kokizzu/gotro v1.1122.1919/go.mod h1:tdj185UkkGG5vpvrAIE9mRmGnbGsc/fnkMvp6j5xA90=
+github.com/kokizzu/gotro v1.1123.1620 h1:BBHsLd2LI7mMsUBVjhkhvrQaZeBI7etV8AWuzYuNl0I=
+github.com/kokizzu/gotro v1.1123.1620/go.mod h1:tdj185UkkGG5vpvrAIE9mRmGnbGsc/fnkMvp6j5xA90=
 github.com/kokizzu/id64 v1.817.1508/go.mod h1:vpfzVnhse8Pc9pfUgt7osODxipwlNzk4XBiNqBUWPjQ=
 github.com/kokizzu/id64 v1.1114.1245 h1:y/8nd2/HhTRahwRElkpJ4orL8t4OfOD0JQPo5qAMdgk=
 github.com/kokizzu/id64 v1.1114.1245/go.mod h1:vpfzVnhse8Pc9pfUgt7osODxipwlNzk4XBiNqBUWPjQ=

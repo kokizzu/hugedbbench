@@ -6,7 +6,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/graphql-go/graphql v0.8.0
 	github.com/jackc/pgx/v4 v4.13.0
-	github.com/kokizzu/gotro v1.1122.1919
+	github.com/kokizzu/gotro v1.1123.1620
 	github.com/kokizzu/id64 v1.1114.1245
 	github.com/stretchr/testify v1.7.0
 	github.com/tarantool/go-tarantool v0.0.0-20201220111423-77ce7d9a407a

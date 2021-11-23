@@ -1,4 +1,4 @@
-package rqQ
+package rqFoo
 
 import "github.com/kokizzu/gotro/I"
 

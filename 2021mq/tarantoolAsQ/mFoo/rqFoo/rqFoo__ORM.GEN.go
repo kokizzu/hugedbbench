@@ -1,4 +1,4 @@
-package rqQ
+package rqFoo
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 
@@ -7,18 +7,17 @@ import (
 
 	`github.com/tarantool/go-tarantool`
 
-	`github.com/graphql-go/graphql`
 	`github.com/kokizzu/gotro/A`
 	`github.com/kokizzu/gotro/D/Tt`
 	`github.com/kokizzu/gotro/L`
 	`github.com/kokizzu/gotro/X`
 )
 
-//go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file rqQ__ORM.GEN.go
-//go:generate replacer 'Id" form' 'Id,string" form' type rqQ__ORM.GEN.go
-//go:generate replacer 'json:"id"' 'json:"id,string"' type rqQ__ORM.GEN.go
-//go:generate replacer 'By" form' 'By,string" form' type rqQ__ORM.GEN.go
-// go:generate msgp -tests=false -file rqQ__ORM.GEN.go -o rqQ__MSG.GEN.go
+//go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file rqFoo__ORM.GEN.go
+//go:generate replacer 'Id" form' 'Id,string" form' type rqFoo__ORM.GEN.go
+//go:generate replacer 'json:"id"' 'json:"id,string"' type rqFoo__ORM.GEN.go
+//go:generate replacer 'By" form' 'By,string" form' type rqFoo__ORM.GEN.go
+// go:generate msgp -tests=false -file rqFoo__ORM.GEN.go -o rqFoo__MSG.GEN.go
 
 type Foo struct {
 	Adapter *Tt.Adapter `json:"-" msg:"-" query:"-" form:"-"`
@@ -55,33 +54,6 @@ func (f *Foo) FindById() bool { //nolint:dupl false positive
 	return false
 }
 
-var GraphqlFieldFooById = &graphql.Field{
-	Type: GraphqlTypeFoo,
-	Description: `list of Foo`,
-	Args: graphql.FieldConfigArgument{
-		`Id`: &graphql.ArgumentConfig{
-			Type: graphql.Int,
-		},
-	},
-}
-
-func (g *Foo) GraphqlFieldFooByIdWithResolver() *graphql.Field {
-	field := *GraphqlFieldFooById
-	field.Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-		q := g
-		v, ok := p.Args[`id`]
-		if !ok {
-			v, _ = p.Args[`Id`]
-		}
-		q.Id = X.ToU(v)
-		if q.FindById() {
-			return q, nil
-		}
-		return nil, nil
-	}
-	return &field
-}
-
 func (f *Foo) sqlSelectAllFields() string { //nolint:dupl false positive
 	return ` "id"
 	, "when"
@@ -112,8 +84,12 @@ func (f *Foo) sqlWhen() string { //nolint:dupl false positive
 }
 
 func (f *Foo) ToArray() A.X { //nolint:dupl false positive
+	var id interface{} = nil
+	if f.Id != 0 {
+		id = f.Id
+	}
 	return A.X{
-		f.Id,   // 0
+		id,
 		f.When, // 1
 	}
 }
@@ -131,20 +107,6 @@ func (f *Foo) Total() int64 { //nolint:dupl false positive
 	}
 	return 0
 }
-
-var GraphqlTypeFoo = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: `foo`,
-		Fields: graphql.Fields{
-			`id`: &graphql.Field{
-				Type: graphql.Int,
-			},
-			`when`: &graphql.Field{
-				Type: graphql.Int,
-			},
-		},
-	},
-)
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 

@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/kokizzu/gotro/D/Tt"
 	"github.com/kokizzu/gotro/L"
-	"github.com/kokizzu/id64"
 	"github.com/tarantool/go-tarantool"
 	"hugedbbench/2021mq/tarantoolAsQ/mFoo"
-	"hugedbbench/2021mq/tarantoolAsQ/mFoo/rqQ"
-	"hugedbbench/2021mq/tarantoolAsQ/mFoo/wcQ"
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo"
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo/wcFoo"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -71,6 +70,10 @@ Total (s) 10.213670874s
 //   box.space.foo:truncate()
 //   box.space.foo:drop() # or drop
 
+// check/verify
+// docker exec -it $(docker ps | grep taranto | cut -d ' ' -f 1) tarantoolctl connect 3301
+//   box.space.foo:count() # should be 2000000
+
 func main() {
 	startBenchmark := time.Now()
 	tt := &Tt.Adapter{Connection: ConnectTarantool(), Reconnect: ConnectTarantool}
@@ -97,7 +100,7 @@ func main() {
 	
 	go func() {
 		lastFetch := int64(0)
-		rq := rqQ.NewFoo(tt)
+		rq := rqFoo.NewFoo(tt)
 		for {
 			rows := rq.FindGreaterThan(lastFetch, 10000)
 			if len(rows) == 0 {
@@ -144,8 +147,7 @@ func main() {
 		go func(z int) {
 			//fmt.Println(`Producer spawned`, z)
 			for y := 0; y < MSGS; y++ {
-				wc := wcQ.NewFooMutator(tt)
-				wc.Id = id64.UID()
+				wc := wcFoo.NewFooMutator(tt)
 				wc.When = uint64(time.Now().UnixNano())
 				if !wc.DoInsert() {
 					atomic.AddInt64(&failProduce, 1)

@@ -1,28 +1,29 @@
-package wcQ
+package wcFoo
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 
 import (
-	`hugedbbench/2021mq/tarantoolAsQ/mFoo/rqQ`
+	`hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo`
 
 	`github.com/kokizzu/gotro/A`
 	`github.com/kokizzu/gotro/D/Tt`
 	`github.com/kokizzu/gotro/L`
+	`github.com/kokizzu/gotro/X`
 )
 
-//go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file wcQ__ORM.GEN.go
-//go:generate replacer 'Id" form' 'Id,string" form' type wcQ__ORM.GEN.go
-//go:generate replacer 'json:"id"' 'json:"id,string"' type wcQ__ORM.GEN.go
-//go:generate replacer 'By" form' 'By,string" form' type wcQ__ORM.GEN.go
-// go:generate msgp -tests=false -file wcQ__ORM.GEN.go -o wcQ__MSG.GEN.go
+//go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file wcFoo__ORM.GEN.go
+//go:generate replacer 'Id" form' 'Id,string" form' type wcFoo__ORM.GEN.go
+//go:generate replacer 'json:"id"' 'json:"id,string"' type wcFoo__ORM.GEN.go
+//go:generate replacer 'By" form' 'By,string" form' type wcFoo__ORM.GEN.go
+// go:generate msgp -tests=false -file wcFoo__ORM.GEN.go -o wcFoo__MSG.GEN.go
 
 type FooMutator struct {
-	rqQ.Foo
+	rqFoo.Foo
 	mutations []A.X
 }
 
 func NewFooMutator(adapter *Tt.Adapter) *FooMutator {
-	return &FooMutator{Foo: rqQ.Foo{Adapter: adapter}}
+	return &FooMutator{Foo: rqFoo.Foo{Adapter: adapter}}
 }
 
 func (f *FooMutator) HaveMutation() bool { //nolint:dupl false positive
@@ -59,7 +60,13 @@ func (f *FooMutator) DoDeletePermanentById() bool { //nolint:dupl false positive
 
 // insert, error if exists
 func (f *FooMutator) DoInsert() bool { //nolint:dupl false positive
-	_, err := f.Adapter.Insert(f.SpaceName(), f.ToArray())
+	row, err := f.Adapter.Insert(f.SpaceName(), f.ToArray())
+	if err == nil {
+		tup := row.Tuples()
+		if len(tup) > 0 && len(tup[0]) > 0 && tup[0][0] != nil {
+			f.Id = X.ToU(tup[0][0])
+		}
+	}
 	return !L.IsError(err, `Foo.DoInsert failed: `+f.SpaceName())
 }
 

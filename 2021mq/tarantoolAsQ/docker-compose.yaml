@@ -5,6 +5,6 @@ services:
     image: tarantool/tarantool:2.8.2 
     # x.x.0 = alpha, x.x.1 = beta, x.x.2+ = stable, latest not always stable
     volumes:
-      - ./tarantool1:/usr/local/share/tarantool
+      - ./tarantool1:/var/lib/tarantool
     ports:
       - "3301:3301"
