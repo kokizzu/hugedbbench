@@ -32,7 +32,7 @@ services:
       - 9092:9092
       - 29092:29092
     volumes:
-      - ./redpanda1:/var/lib/redpanda
+      - ./redpanda1:/var/lib/redpanda/data
   redpanda2:
     image: docker.vectorized.io/vectorized/redpanda:latest
     depends_on:
@@ -76,8 +76,6 @@ services:
     privileged: true
     container_name: redpanda3
     hostname: redpanda3
-    volumes:
-      - ./redpanda3:/var/lib/redpanda
     command:
       - redpanda
       - start
@@ -105,3 +103,5 @@ services:
       - 8084:8084
       - 9094:9094
       - 29094:29094
+    volumes:
+      - ./redpanda3:/var/lib/redpanda

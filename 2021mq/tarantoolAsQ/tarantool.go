@@ -36,7 +36,9 @@ const TOPIC = `foo`
 const PROGRESS = 10000
 
 /*
- do not use this, since it's not true write serializable
+ do not use this, since it's not true write serializable, 
+ probably use sequence will make it true serializable
+ https://www.tarantool.io/en/doc/latest/book/box/data_model/#index-box-sequence
 
 TARANTOOL version: 2.8.2
 standard database, with 1 sec pooling delay
