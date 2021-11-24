@@ -22,3 +22,5 @@ clean-2021mq:
 	sudo rm -rf $(wildcard 2021mq/tidbAsQ/ti*/)
 	sudo du -hs $(wildcard 2021mq/tarantoolAsQ/t*/)
 	sudo rm -rf $(wildcard 2021mq/tarantoolAsQ/t*/)
+	sudo du -hs $(wildcard 2021mq/clickhouseAsQ/c*/)
+	sudo rm -rf $(wildcard 2021mq/clickhouseAsQ/c*/)

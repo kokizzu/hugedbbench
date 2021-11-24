@@ -47,10 +47,10 @@ func TestDb(t *testing.T) {
 	defer conn.Close()
 
 	_, err = conn.ExecContext(bg, `CREATE TABLE IF NOT EXISTS bar1(id BIGINT PRIMARY KEY, foo VARCHAR(10) UNIQUE)`)
-	L.PanicIf(err, `failed create table bar1`)
+	L.PanicIf(err, `failed create table foo`)
 
-	_, err = conn.ExecContext(bg, `TRUNCATE TABLE bar1`)
-	L.PanicIf(err, `failed truncate table bar1`)
+	_, err = conn.ExecContext(bg, `TRUNCATE table foo`)
+	L.PanicIf(err, `failed truncate table foo`)
 
 	wg := sync.WaitGroup{}
 

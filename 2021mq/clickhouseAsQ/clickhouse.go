@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/ClickHouse/clickhouse-go"
+	"github.com/kokizzu/ch-timed-buffer"
 	"github.com/kokizzu/gotro/L"
 	"sync"
 	"sync/atomic"
@@ -17,38 +17,41 @@ const CONSUMERS = 100
 const TOPIC = `foo`
 const PROGRESS = 10000
 
-/*
- not ok, since TiDB inserts not true serializable like in old SQL databases
-*/
-
 // docker-compose -f docker-compose.yaml up --remove-orphans
+// docker exec -it 5ef0b3b007c0 clickhouse client  
+
+// verify
+//  docker exec -it $(docker ps|grep clickhouse| cut -d ' ' -f 1) clickhouse client
+//  SELECT COUNT(*) FROM foo
 
 func main() {
 	startBenchmark := time.Now()
 	//seeds := []string{"localhost:9092"}
-
-	bg := context.Background() // shared context
-	myUrl := "%s:%s@tcp(%s:%d)/%s"
-	myUrl = fmt.Sprintf(myUrl,
-		`root`,
-		``, // empty password
-		`127.0.0.1`,
-		4000,
-		`test`,
-	)
-
-	conn, err := sql.Open("mysql", myUrl)
+	
+	conn, err := sql.Open("clickhouse", "tcp://127.0.0.1:9000") // ?debug=true
 	L.PanicIf(err, `cannot connect db`)
 	conn.SetConnMaxLifetime(time.Minute * 3)
 	conn.SetMaxOpenConns(1024)
 	conn.SetMaxIdleConns(1024)
 	defer conn.Close()
+	
+	_, err = conn.Exec(`DROP TABLE IF EXISTS foo`)
+	L.PanicIf(err, `drop table`)
 
-	_, err = conn.ExecContext(bg, `CREATE TABLE IF NOT EXISTS foo(idx BIGINT PRIMARY KEY AUTO_INCREMENT, createdAt BIGINT)`)
+	// https://github.com/ClickHouse/ClickHouse/issues/9361
+	_, err = conn.Exec(`
+CREATE TABLE IF NOT EXISTS foo(
+    idx UInt64 DEFAULT toUnixTimestamp64Milli(now64())*1000000 + rowNumberInAllBlocks(), 
+    createdAt UInt64
+) Engine = ReplacingMergeTree()
+ORDER BY idx`)
 	L.PanicIf(err, `failed create table foo`)
 
-	_, err = conn.ExecContext(bg, `TRUNCATE TABLE foo`)
+	_, err = conn.Exec(`TRUNCATE TABLE foo`)
 	L.PanicIf(err, `failed truncate table foo`)
+	
+	row := conn.QueryRow(`SELECT COUNT(*) FROM foo FINAL`) // force truncate
+	L.PanicIf(row.Err(), `force truncate`)
 
 	wgConsume := &sync.WaitGroup{}
 	wgConsume.Add(PRODUCERS * MSGS) // includes consuming
@@ -63,7 +66,7 @@ func main() {
 		lastFetch := int64(-1)
 		for {
 			var idx, createdAt int64
-			rows, err := conn.QueryContext(bg, `SELECT idx, createdAt FROM foo WHERE idx>? ORDER BY idx LIMIT 1000`, lastFetch)
+			rows, err := conn.Query(`SELECT idx, createdAt FROM foo WHERE idx>? ORDER BY idx LIMIT 10000`, lastFetch)
 			if err != nil {
 				if err == sql.ErrNoRows {
 					time.Sleep(time.Second)
@@ -94,7 +97,7 @@ func main() {
 						}
 					}
 					if atomic.AddInt64(&consumed, 1)%PROGRESS == 0 {
-						fmt.Print("C")
+						//fmt.Print("C")
 					}
 					wgConsume.Done()
 				} else {
@@ -112,18 +115,23 @@ func main() {
 	produced := int64(0)
 
 	startProduce := time.Now().UnixNano()
+	tb := chBuffer.NewTimedBuffer(conn, 600000, 1*time.Second, func(tx *sql.Tx) *sql.Stmt {
+		stmt, err := tx.Prepare(`INSERT INTO foo(createdAt) VALUES(?)`)
+		L.IsError(err,`tx.Prepare`)
+		return stmt
+	})
 	for z := 0; z < PRODUCERS; z++ {
 		go func(z int) {
 			//fmt.Println(`Producer spawned`, z)
 			for y := 0; y < MSGS; y++ {
-				_, err = conn.ExecContext(bg, `INSERT INTO foo(createdAt) VALUES(?)`, time.Now().UnixNano())
+				tb.Insert([]interface{}{time.Now().UnixNano()})
 				if err != nil {
 					atomic.AddInt64(&failProduce, 1)
 					L.Print(err)
 					return
 				}
 				if atomic.AddInt64(&produced, 1)%PROGRESS == 0 {
-					fmt.Print("P")
+					//fmt.Print("P")
 				}
 				wgProduce.Done()
 			}
@@ -131,6 +139,8 @@ func main() {
 	}
 
 	wgProduce.Wait()
+	tb.Close()
+	<-tb.WaitFinalFlush
 	durProduce = time.Now().UnixNano() - startProduce
 	wgConsume.Wait()
 

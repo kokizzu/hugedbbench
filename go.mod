@@ -3,10 +3,11 @@ module hugedbbench
 go 1.17
 
 require (
+	github.com/ClickHouse/clickhouse-go v1.4.5
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/graphql-go/graphql v0.8.0
 	github.com/jackc/pgx/v4 v4.13.0
-	github.com/kokizzu/gotro v1.1123.1620
+	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
+	github.com/kokizzu/gotro v1.1123.1901
 	github.com/kokizzu/id64 v1.1114.1245
 	github.com/stretchr/testify v1.7.0
 	github.com/tarantool/go-tarantool v0.0.0-20201220111423-77ce7d9a407a
@@ -14,6 +15,7 @@ require (
 )
 
 require (
+	github.com/cloudflare/golz4 v0.0.0-20150217214814-ef862a3cdc58 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/goccy/go-yaml v1.9.4 // indirect
@@ -30,7 +32,7 @@ require (
 	github.com/kpango/fastime v1.0.17 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.11 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pierrec/lz4/v4 v4.1.11 // indirect
@@ -41,7 +43,7 @@ require (
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
 	golang.org/x/net v0.0.0-20210913180222-943fd674d43e // indirect
-	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
+	golang.org/x/sys v0.0.0-20211123173158-ef496fb156ab // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.6 // indirect

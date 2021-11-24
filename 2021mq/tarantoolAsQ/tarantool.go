@@ -35,16 +35,14 @@ const TOPIC = `foo`
 const PROGRESS = 10000
 
 /*
- do not use this, since it's not true write serializable, 
- probably use sequence will make it true serializable
- https://www.tarantool.io/en/doc/latest/book/box/data_model/#index-box-sequence
+using sequence as counter  https://www.tarantool.io/en/doc/latest/book/box/data_model/#index-box-sequence
 
 TARANTOOL version: 2.8.2
 standard database, with 1 sec pooling delay
 Memtx engine, because Vinyl engine not true write-serializable
 probably must use auto_increment
 
-=== tarantool single:
+=== tarantool single (using manual counter, not sequence, unstable):
 
 FailProduce:  0
 FailConsume:  0

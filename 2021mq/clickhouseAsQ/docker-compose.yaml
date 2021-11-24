@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  clickhouse1:
+    image: yandex/clickhouse-server:latest
+    ports:
+      - 8123:8123
+      - 9000:9000
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+#    volumes:
+#      - ./clickhouse1:/var/lib/clickhouse/data
+#      - ./chlog1:/var/log/clickhouse-server 
