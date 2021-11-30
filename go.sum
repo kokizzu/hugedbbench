@@ -677,10 +677,8 @@ github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38/go.
 github.com/kokizzu/goproc v1.625.1807/go.mod h1:LIu3R/6UUBVz9J/KZPkONmd/LoANaP8SZIUCi5qcugU=
 github.com/kokizzu/gotro v1.410.2358/go.mod h1:S3go3s6wxewdqc1VZ3jSyQVxUBxBdse3KdrgqN7LPRs=
 github.com/kokizzu/gotro v1.625.1808/go.mod h1:S3go3s6wxewdqc1VZ3jSyQVxUBxBdse3KdrgqN7LPRs=
-github.com/kokizzu/gotro v1.1123.1620 h1:BBHsLd2LI7mMsUBVjhkhvrQaZeBI7etV8AWuzYuNl0I=
-github.com/kokizzu/gotro v1.1123.1620/go.mod h1:tdj185UkkGG5vpvrAIE9mRmGnbGsc/fnkMvp6j5xA90=
-github.com/kokizzu/gotro v1.1123.1901 h1:AKBant9i+M7MINVeb70BAhkkbPYov78TGc/SMZLgRxU=
-github.com/kokizzu/gotro v1.1123.1901/go.mod h1:t3a4JP69ZKJISakkv2G3IXIGN7sl4OgH0IY/mfO6Ke4=
+github.com/kokizzu/gotro v1.1130.1138 h1:tX7RfbOOJ/9ZFUbytXsU9W3o1zuC1yhdKjnJV0oJxEs=
+github.com/kokizzu/gotro v1.1130.1138/go.mod h1:z3bCkXBMZLQTPxpmscixHRWrTIfZE9SzJjH9r6AWqn4=
 github.com/kokizzu/id64 v1.817.1508/go.mod h1:vpfzVnhse8Pc9pfUgt7osODxipwlNzk4XBiNqBUWPjQ=
 github.com/kokizzu/id64 v1.1114.1245 h1:y/8nd2/HhTRahwRElkpJ4orL8t4OfOD0JQPo5qAMdgk=
 github.com/kokizzu/id64 v1.1114.1245/go.mod h1:vpfzVnhse8Pc9pfUgt7osODxipwlNzk4XBiNqBUWPjQ=
@@ -742,8 +740,6 @@ github.com/mattn/go-colorable v0.1.6/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope
 github.com/mattn/go-colorable v0.1.7/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
 github.com/mattn/go-colorable v0.1.8/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
 github.com/mattn/go-colorable v0.1.9/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
-github.com/mattn/go-colorable v0.1.11 h1:nQ+aFkoE2TMGc0b68U2OKSexC+eq46+XwZzWXHRmPYs=
-github.com/mattn/go-colorable v0.1.11/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
 github.com/mattn/go-colorable v0.1.12 h1:jF+Du6AlPIjs2BiUiQlKOX0rt3SujHxPnksPKZbaA40=
 github.com/mattn/go-colorable v0.1.12/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
 github.com/mattn/go-isatty v0.0.3/go.mod h1:M+lRXTBqGeGNdLjl/ufCoiOlB5xdOkqRJdNxMWT7Zi4=
@@ -845,7 +841,6 @@ github.com/op/go-logging v0.0.0-20160315200505-970db520ece7/go.mod h1:HzydrMdWEr
 github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
-github.com/opencontainers/image-spec v1.0.1 h1:JMemWkRwHx4Zj+fVxWoMCFm/8sYGGrUVojFA6h/TRcI=
 github.com/opencontainers/image-spec v1.0.1/go.mod h1:BtxoFyWECRxE4U/7sNtV5W15zMzWCbyJoFRP3s7yZA0=
 github.com/opencontainers/image-spec v1.0.2 h1:9yCKha/T5XdGtO0q9Q9a6T5NUCsTn/DrBg0D7ufOcFM=
 github.com/opencontainers/image-spec v1.0.2/go.mod h1:BtxoFyWECRxE4U/7sNtV5W15zMzWCbyJoFRP3s7yZA0=
@@ -1408,8 +1403,6 @@ golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 h1:7NCfEGl0sfUojmX78nK9pBJuUlSZWEJA/TwASvfiPLo=
-golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20211123173158-ef496fb156ab h1:rfJ1bsoJQQIAoAxTxB7bme+vHrNkRw8CqfsYh9w54cw=
 golang.org/x/sys v0.0.0-20211123173158-ef496fb156ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
