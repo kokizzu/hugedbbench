@@ -17,7 +17,7 @@ const MSGS = 20000 // x PRODUCERS
 const CONSUMERS = 100
 const TOPIC = `foo`
 const PROGRESS = 100
-const WILDCARD = `*`
+const WILDCARD = `.*`
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
 // docker-compose -f docker-compose-multi.yaml up --remove-orphans
@@ -30,18 +30,18 @@ func main() {
 	js, err := nc.JetStream()
 	L.PanicIf(err, `nc.JetStream`)
 	defer nc.Close()
-	
+
 	// create stream
 	stream, err := js.StreamInfo(TOPIC)
-   	L.PanicIf(err,`js.StreamInfo`)
-   	if stream == nil {
-      log.Printf("creating stream %q and subjects %q", TOPIC, TOPIC+WILDCARD)
-      _, err = js.AddStream(&nats.StreamConfig{
-         Name:     TOPIC,
-         Subjects: []string{TOPIC},
-      })
-	  L.PanicIf(err,`js.AddStream`)
-   }
+	L.IsError(err, `js.StreamInfo`)
+	if stream == nil {
+		log.Printf("creating stream %q and subjects %q", TOPIC, TOPIC)
+		_, err = js.AddStream(&nats.StreamConfig{
+			Name:     TOPIC,
+			Subjects: []string{TOPIC},
+		})
+		L.IsError(err, `js.AddStream`)
+	}
 
 	wgConsume := &sync.WaitGroup{}
 	wgConsume.Add(PRODUCERS * MSGS) // includes consuming
@@ -56,7 +56,7 @@ func main() {
 		for z := 0; z < CONSUMERS; z++ {
 			go func(z int) {
 				//fmt.Println(`Consumer spawned`, z)
-				_, err := js.Subscribe(TOPIC+WILDCARD, func(msg *nats.Msg) {
+				_, err := js.Subscribe(TOPIC, func(msg *nats.Msg) {
 					//atomic.AddInt64(&failConsume, int64(len(errs)))
 					//L.Print(errs)
 					m := M.SX{}
@@ -78,14 +78,14 @@ func main() {
 							}
 						}
 						if atomic.AddInt64(&consumed, 1)%PROGRESS == 0 {
-							//fmt.Print("C")
+							fmt.Print("C")
 						}
 						wgConsume.Done()
 					} else {
 						atomic.AddInt64(&doubleConsume, 1)
 					}
 				})
-				L.PanicIf(err,`js.Subscribe`)
+				L.PanicIf(err, `js.Subscribe`)
 			}(z)
 		}
 	}()
@@ -112,7 +112,7 @@ func main() {
 				}
 				wgProduce.Done()
 				if atomic.AddInt64(&produced, 1)%PROGRESS == 0 {
-					//fmt.Print("P")
+					fmt.Print("P")
 				}
 			}
 		}(z)
