@@ -12,15 +12,28 @@ import (
 	"time"
 )
 
-const PRODUCERS = 100 //* 0.5 // some publishers timed out
-const MSGS = 20000    // x PRODUCERS
-const CONSUMERS = 100 //* 0.1 // dunno why, 56th-86th consumer always timeout
+const PRODUCERS = 100 //* 0.5 // some publishers timed out --> lowered because timed out
+const MSGS = 20000    // x PRODUCERS --> increased x10
+const CONSUMERS = 100 * 0.5 // dunno why, 56th-86th consumer always timeout
 const TOPIC = `foo`
 const PROGRESS = 10000
 const WILDCARD = `.*`
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
 // docker-compose -f docker-compose-multi.yaml up --remove-orphans
+
+/*
+single node result:
+
+FailConsume:  0
+DoubleConsume:  97981931
+Produced (ms):  407812
+MaxLatency (ms):  837
+AvgLatency (ms):  42
+Total (s) 6m48.055941007s
+
+second time run: timed out
+ */
 
 // https://shijuvar.medium.com/building-distributed-event-streaming-systems-in-go-with-nats-jetstream-3938e6dc7a13
 func main() {
@@ -55,8 +68,13 @@ func main() {
 	go func() {
 		for z := 0; z < CONSUMERS; z++ {
 			go func(z int) {
+				nc, err := nats.Connect(nats.DefaultURL)
+				L.PanicIf(err, `nats.Connect`)
+				js, err := nc.JetStream()
+				L.PanicIf(err, `nc.JetStream`)
+				//defer nc.Close() // don't close or it will not consume
 				//fmt.Println(`Consumer spawned`, z)
-				_, err := js.Subscribe(TOPIC, func(msg *nats.Msg) {
+				_, err = js.Subscribe(TOPIC, func(msg *nats.Msg) {
 					//atomic.AddInt64(&failConsume, int64(len(errs)))
 					//L.Print(errs)
 					m := M.SX{}
@@ -78,7 +96,7 @@ func main() {
 							}
 						}
 						if atomic.AddInt64(&consumed, 1)%PROGRESS == 0 {
-							//fmt.Print("C")
+							fmt.Print("C")
 						}
 						_ = msg.Ack()
 						wgConsume.Done()
@@ -100,6 +118,12 @@ func main() {
 	startProduce := time.Now().UnixNano()
 	for z := 0; z < PRODUCERS; z++ {
 		go func(z int) {
+			// multiple producers works fast
+			nc, err := nats.Connect(nats.DefaultURL)
+			L.PanicIf(err, `nats.Connect`)
+			js, err := nc.JetStream()
+			L.PanicIf(err, `nc.JetStream`)
+			defer nc.Close()
 			//fmt.Println(`Producer spawned`, z)
 			for y := 0; y < MSGS; y++ {
 				_, err := js.Publish(TOPIC, []byte(M.SX{
@@ -113,7 +137,7 @@ func main() {
 				}
 				wgProduce.Done()
 				if atomic.AddInt64(&produced, 1)%PROGRESS == 0 {
-					//fmt.Print("P")
+					fmt.Print("P")
 				}
 			}
 		}(z)

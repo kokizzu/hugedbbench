@@ -16,7 +16,7 @@ const PRODUCERS = 1000
 const MSGS = 2000 // x PRODUCERS
 const CONSUMERS = 100
 const TOPIC = `foo`
-const PROGRESS = 10
+const PROGRESS = 10000
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
 // docker exec -it $(docker ps | grep kafka1 | cut -d ' ' -f 1) kafka-topics --bootstrap-server kafka1:9092 --create --if-not-exists --topic foo --replication-factor 1 --partitions 1
