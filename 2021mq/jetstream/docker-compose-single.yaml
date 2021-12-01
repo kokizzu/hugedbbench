@@ -1,0 +1,11 @@
+version: '3'
+services:
+  jet0:
+    container_name: jet0
+    image: synadia/jsm:nightly
+    entrypoint: /nats-server
+    command: --name jet0 --cluster_name jscluster0 --js --sd /data --cluster nats://0.0.0.0:4245 --routes nats://jet0:4245 -p 4222
+    ports:
+    - 4222:4222
+    volumes:
+    - ./jet0:/data

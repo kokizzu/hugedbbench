@@ -9,6 +9,7 @@ require (
 	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
 	github.com/kokizzu/gotro v1.1130.1138
 	github.com/kokizzu/id64 v1.1114.1245
+	github.com/nats-io/nats.go v1.13.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tarantool/go-tarantool v0.0.0-20201220111423-77ce7d9a407a
 	github.com/twmb/franz-go v1.2.4
@@ -34,6 +35,8 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pierrec/lz4/v4 v4.1.11 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

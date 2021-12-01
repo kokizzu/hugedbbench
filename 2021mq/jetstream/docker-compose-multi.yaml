@@ -1,0 +1,31 @@
+version: '3'
+services:
+  jet1:
+    container_name: jet1
+    image: synadia/jsm:nightly
+    entrypoint: /nats-server
+    command: --name jet1 --cluster_name jscluster1 --js --sd /data --cluster nats://0.0.0.0:4245 --routes nats://jet1:4245,nats://jet2:4245,nats://jet3:4245 -p 4222
+    ports:
+    - 4222:4222
+    volumes:
+    - ./jet1:/data
+
+  jet2:
+    container_name: jet2
+    image: synadia/jsm:nightly
+    entrypoint: /nats-server
+    command: --name jet2 --cluster_name jscluster1 --js --sd /data --cluster nats://0.0.0.0:4245 --routes nats://jet1:4245,nats://jet2:4245,nats://jet3:4245 -p 4222
+    ports:
+    - 4223:4222
+    volumes:
+    - ./jet2:/data
+
+  jet3:
+    container_name: jet3
+    image: synadia/jsm:nightly
+    entrypoint: /nats-server
+    command: --name jet3 --cluster_name jscluster1 --js --sd /data --cluster nats://0.0.0.0:4245 --routes nats://jet1:4245,nats://jet2:4245,nats://jet3:4245 -p 4222
+    ports:
+    - 4224:4222
+    volumes:
+    - ./jet3:/data
