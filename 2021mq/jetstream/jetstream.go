@@ -12,11 +12,11 @@ import (
 	"time"
 )
 
-const PRODUCERS = 100
-const MSGS = 20000 // x PRODUCERS
-const CONSUMERS = 100
+const PRODUCERS = 100 //* 0.5 // some publishers timed out
+const MSGS = 20000    // x PRODUCERS
+const CONSUMERS = 100 //* 0.1 // dunno why, 56th-86th consumer always timeout
 const TOPIC = `foo`
-const PROGRESS = 100
+const PROGRESS = 10000
 const WILDCARD = `.*`
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
@@ -78,14 +78,15 @@ func main() {
 							}
 						}
 						if atomic.AddInt64(&consumed, 1)%PROGRESS == 0 {
-							fmt.Print("C")
+							//fmt.Print("C")
 						}
+						_ = msg.Ack()
 						wgConsume.Done()
 					} else {
 						atomic.AddInt64(&doubleConsume, 1)
 					}
 				})
-				L.PanicIf(err, `js.Subscribe`)
+				L.PanicIf(err, `js.Subscribe %d`, z)
 			}(z)
 		}
 	}()
@@ -107,12 +108,12 @@ func main() {
 				}.ToJson()))
 				if err != nil {
 					atomic.AddInt64(&failProduce, 1)
-					L.Print(err)
+					L.Print(err, z)
 					return
 				}
 				wgProduce.Done()
 				if atomic.AddInt64(&produced, 1)%PROGRESS == 0 {
-					fmt.Print("P")
+					//fmt.Print("P")
 				}
 			}
 		}(z)
