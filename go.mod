@@ -7,15 +7,18 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
-	github.com/kokizzu/gotro v1.1130.1138
+	github.com/kokizzu/gotro v1.1205.1150
 	github.com/kokizzu/id64 v1.1114.1245
 	github.com/nats-io/nats.go v1.13.0
 	github.com/stretchr/testify v1.7.0
-	github.com/tarantool/go-tarantool v0.0.0-20201220111423-77ce7d9a407a
+	github.com/tarantool/go-tarantool v0.0.0-20211208200151-cbef4af23fad
 	github.com/twmb/franz-go v1.2.4
 )
 
 require (
+	github.com/OneOfOne/cmap v0.0.0-20170825200327-ccaef7657ab8 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/buaazp/fasthttprouter v0.1.1 // indirect
 	github.com/cloudflare/golz4 v0.0.0-20150217214814-ef862a3cdc58 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
@@ -29,10 +32,13 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.8.1 // indirect
 	github.com/jackc/puddle v1.1.3 // indirect
+	github.com/jmoiron/sqlx v1.3.4 // indirect
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kpango/fastime v1.0.17 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/lib/pq v1.10.4 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/nats-io/jwt v1.2.2 // indirect
@@ -42,17 +48,22 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pierrec/lz4/v4 v4.1.11 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
+	github.com/tdewolff/minify v2.3.6+incompatible // indirect
+	github.com/tdewolff/parse v2.3.4+incompatible // indirect
 	github.com/twmb/franz-go/pkg/kmsg v0.0.0-20211118234851-03c58cbf39e9 // indirect
 	github.com/twmb/go-rbtree v1.0.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/valyala/fasthttp v1.31.0 // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
-	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e // indirect
-	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
-	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	google.golang.org/appengine v1.6.6 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
-	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
+	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
+	gopkg.in/redis.v5 v5.2.9 // indirect
+	gopkg.in/vmihailenco/msgpack.v2 v2.9.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
