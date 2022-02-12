@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"github.com/kokizzu/gotro/L"
 	"github.com/kokizzu/gotro/M"
-	"github.com/nats-io/nats.go"
+	//"github.com/nats-io/nats.go" // comment until security fixes out
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
 )
 
-const PRODUCERS = 100 //* 0.5 // some publishers timed out --> lowered because timed out
-const MSGS = 20000    // x PRODUCERS --> increased x10
+const PRODUCERS = 100       //* 0.5 // some publishers timed out --> lowered because timed out
+const MSGS = 20000          // x PRODUCERS --> increased x10
 const CONSUMERS = 100 * 0.5 // dunno why, 56th-86th consumer always timeout
 const TOPIC = `foo`
 const PROGRESS = 10000
@@ -33,7 +33,7 @@ AvgLatency (ms):  42
 Total (s) 6m48.055941007s
 
 second time run: timed out
- */
+*/
 
 // https://shijuvar.medium.com/building-distributed-event-streaming-systems-in-go-with-nats-jetstream-3938e6dc7a13
 func main() {
