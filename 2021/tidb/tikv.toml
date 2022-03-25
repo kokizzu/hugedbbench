@@ -100,6 +100,7 @@ log-level = "error"
 # When the pending write bytes exceeds this threshold,
 # the "scheduler too busy" error is displayed.
 # scheduler-pending-write-threshold = "100MB"
+reserve-space = "32MB"
 
 [pd]
 # pd endpoints
