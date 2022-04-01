@@ -1,0 +1,9 @@
+version: '3'
+  
+services:
+  nats1:
+    image: nats
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: "--http_port 8222"

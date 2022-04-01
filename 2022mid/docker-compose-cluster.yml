@@ -1,0 +1,18 @@
+version: "3.5" 
+services: 
+  nats: 
+    image: nats 
+    ports: 
+      - "4222:4222" 
+      - "8222:8222" 
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222" 
+  nats1:
+    image: nats 
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+  nats2:
+    image: nats 
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+
+#nats sub -s nats://nats:4222 hello &
+#nats pub -s "nats://nats1:4222" hello first
+#nats pub -s "nats://nats2:4222" hello second
