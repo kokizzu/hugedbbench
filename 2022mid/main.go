@@ -41,6 +41,9 @@ func main() {
 					return nc
 				}
 				mutex.Lock()
+				if ncs[idx] != nil {
+					return ncs[idx]
+				}
 				nc, err := nats.Connect("127.0.0.1")
 				L.PanicIf(err, `nats.Connect`)
 				ncs[idx] = nc
@@ -48,7 +51,13 @@ func main() {
 				return nc
 			}
 
-			// ignore closing connection, it's exiting anyway
+			defer func() {
+				for _, nc := range ncs {
+					if nc != nil {
+						nc.Close()
+					}
+				}
+			}()
 
 			// handler
 			app.Get("/", func(c *fiber.Ctx) error {
