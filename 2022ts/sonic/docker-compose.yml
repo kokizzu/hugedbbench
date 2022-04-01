@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  sonic:
+    image: valeriansaliou/sonic:v1.3.2
+    volumes:
+      - ./conf.cfg:/etc/sonic.cfg
+    ports:
+      - 1491:1491
