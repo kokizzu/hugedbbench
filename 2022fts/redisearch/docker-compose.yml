@@ -1,0 +1,7 @@
+
+version: '3'
+services:
+  redisearch:
+    image: "redislabs/redisearch"
+    ports:
+      - "6379:6379"

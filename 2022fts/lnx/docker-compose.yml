@@ -1,0 +1,11 @@
+
+services:
+  lnx1:
+    image: chillfish8/lnx:latest 
+    ports:
+      - "8000:8000"
+    environment:
+      AUTHORIZATION_KEY: hellokey 
+      LOG_LEVEL: info 
+#    volumes:
+#      - "/my/dir:/etc/lnx/index"

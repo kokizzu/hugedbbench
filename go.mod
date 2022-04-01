@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/ClickHouse/clickhouse-go v1.5.4
+	github.com/RediSearch/redisearch-go v1.1.1
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jackc/pgx/v4 v4.15.0
@@ -28,6 +29,7 @@ require (
 	github.com/goccy/go-yaml v1.9.5 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomodule/redigo v1.8.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
