@@ -105,7 +105,7 @@ func main() {
 
 		//// channel (async) -- error slow consumer
 		//ch := make(chan *nats.Msg, 1)
-		//_, err = nc.ChanSubscribe(apiName, ch)
+		//_, err = nc.ChanQueueSubscribe(apiName, queueName, ch)
 		//L.PanicIf(err, `nc.ChanSubscribe`)
 		//for {
 		//	select {
@@ -121,8 +121,7 @@ func main() {
 		})
 
 		var line string
-		fmt.Scanln(&line)
-
+		fmt.Scanln(&line) // wait for input so not exit
 	}
 }
 
@@ -237,7 +236,7 @@ Status code distribution:
 
 ###########################################################################
 
-3. proxied with 2 worker, single nats
+3. proxied with 2 worker (broadcast), single nats
 
 go run main.go # start another instance
 
@@ -288,7 +287,7 @@ Status code distribution:
 
 ###########################################################################
 
-4. proxied with 4 workers, single nats
+4. proxied with 4 worker (broadcast)s, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -439,7 +438,7 @@ Status code distribution:
 
 ###########################################################################
 
-7. 2 core apiproxy, 2 worker 2 core, single nats
+7. 2 core apiproxy, 2 worker (broadcast) 2 core, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -488,7 +487,7 @@ Status code distribution:
 
 ###########################################################################
 
-8. 2 core apiproxy, 4 worker 2 core, single nats
+8. 2 core apiproxy, 4 worker (broadcast) 2 core, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -537,7 +536,7 @@ Status code distribution:
 
 ###########################################################################
 
-9. apiproxy, 4 worker 2 core, create multiple (8) connection on apiserver, single nats
+9. apiproxy, 4 worker (broadcast) 2 core, create multiple (8) connection on apiserver, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -587,7 +586,7 @@ Status code distribution:
 
 ###########################################################################
 
-10. apiproxy, 4 worker 2 core, create multiple (8) connection on apiserver, cluster of 3 nats
+10. apiproxy, 4 worker (broadcast) 2 core, create multiple (8) connection on apiserver, cluster of 3 nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -732,7 +731,7 @@ Status code distribution:
 
 ###########################################################################
 
-13. apiproxy, 4 callback worker, single nats
+13. apiproxy, 4 callback worker (broadcast), single nats
 
 Summary:
   Total:        10.9504 secs
@@ -829,7 +828,7 @@ Status code distribution:
 
 ###########################################################################
 
-15. apiproxy, 2 callback worker, single nats
+15. apiproxy, 2 callback worker (broadcast), single nats
 
 Summary:
   Total:        8.5145 secs
@@ -876,7 +875,7 @@ Status code distribution:
 
 ###########################################################################
 
-16. apiproxy, 4 callback worker, single nats
+16. apiproxy, 4 callback worker (broadcast), single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -974,7 +973,7 @@ Status code distribution:
 
 ###########################################################################
 
-17. apiproxy 8 core, 2 callback worker 2 core, single nats
+17. apiproxy 8 core, 2 callback worker (broadcast) 2 core, single nats
 
 Summary:
   Total:        6.9454 secs
@@ -1022,7 +1021,7 @@ Status code distribution:
 
 ###########################################################################
 
-18. apiproxy 8 core, 4 callback worker 2 core, single nats
+18. apiproxy 8 core, 4 callback worker (broadcast) 2 core, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -1120,7 +1119,7 @@ Status code distribution:
 
 ###########################################################################
 
-19. apiproxy 8 core, 2 callback worker 2 core, single nats 4 core
+19. apiproxy 8 core, 2 callback worker (broadcast) 2 core, single nats 4 core
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -1169,7 +1168,7 @@ Status code distribution:
 
 ###########################################################################
 
-20. apiproxy 8 core, 4 callback worker 2 core, single nats 4 core
+20. apiproxy 8 core, 4 callback worker (broadcast) 2 core, single nats 4 core
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -1267,7 +1266,7 @@ Status code distribution:
 
 ###########################################################################
 
-22. apiproxy 8 core, 2 callback worker 4 core, single nats 4 core
+22. apiproxy 8 core, 2 callback worker (broadcast) 4 core, single nats 4 core
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
@@ -1316,7 +1315,7 @@ Status code distribution:
 
 ###########################################################################
 
-23. apiproxy 8 core, 4 callback worker 4 core, single nats 4 core
+23. apiproxy 8 core, 4 callback worker (broadcast) 4 core, single nats 4 core
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
