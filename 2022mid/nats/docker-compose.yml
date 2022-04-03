@@ -3,6 +3,7 @@ version: '3'
 services:
   nats1:
     image: nats
+    cpus: "0.5"
     ports:
       - "4222:4222"
       - "8222:8222"

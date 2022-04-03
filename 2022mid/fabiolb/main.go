@@ -398,7 +398,7 @@ Status code distribution:
 
 ###########################################################################
 
-3. handling foo with fabio
+3. proxied /foo with fabio
 
 hey -n 1000000 -c 255 http://127.0.0.1:9999/foo
 
@@ -445,4 +445,297 @@ Details (average, fastest, slowest):
 Status code distribution:
   [200] 999855 responses
 
+###########################################################################
+
+4. proxied /foo with fabio, 2 instance
+
+hey -n 1000000 -c 255 http://127.0.0.1:9999/foo
+
+Summary:
+  Total:        14.6571 secs
+  Slowest:      0.1320 secs
+  Fastest:      0.0001 secs
+  Average:      0.0037 secs
+  Requests/sec: 68216.5154
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.013 [985686]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.027 [13702] |■
+  0.040 [232]   |
+  0.053 [176]   |
+  0.066 [31]    |
+  0.079 [1]     |
+  0.092 [19]    |
+  0.106 [0]     |
+  0.119 [0]     |
+  0.132 [7]     |
+
+
+Latency distribution:
+  10% in 0.0003 secs
+  25% in 0.0006 secs
+  50% in 0.0030 secs
+  75% in 0.0057 secs
+  90% in 0.0080 secs
+  95% in 0.0101 secs
+  99% in 0.0141 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.1320 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0805 secs
+  resp wait:    0.0036 secs, 0.0001 secs, 0.0805 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0439 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+###########################################################################
+
+5. proxied /foo with fabio, 1 instance 2 core
+
+hey -n 1000000 -c 255 http://127.0.0.1:9999/foo
+
+Summary:
+  Total:        17.7469 secs
+  Slowest:      0.1719 secs
+  Fastest:      0.0001 secs
+  Average:      0.0045 secs
+  Requests/sec: 56339.5518
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.017 [998327]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.034 [921]   |
+  0.052 [380]   |
+  0.069 [121]   |
+  0.086 [39]    |
+  0.103 [55]    |
+  0.120 [1]     |
+  0.138 [7]     |
+  0.155 [0]     |
+  0.172 [3]     |
+
+
+Latency distribution:
+  10% in 0.0011 secs
+  25% in 0.0024 secs
+  50% in 0.0044 secs
+  75% in 0.0060 secs
+  90% in 0.0077 secs
+  95% in 0.0092 secs
+  99% in 0.0123 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.1719 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0669 secs
+  resp wait:    0.0044 secs, 0.0001 secs, 0.1037 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0661 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+
+###########################################################################
+
+6. proxied /foo with fabio, 2 instance 2 core
+
+hey -n 1000000 -c 255 http://127.0.0.1:9999/foo
+
+Summary:
+  Total:        16.5822 secs
+  Slowest:      0.1153 secs
+  Fastest:      0.0001 secs
+  Average:      0.0042 secs
+  Requests/sec: 60296.9714
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.012 [966182]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.023 [32700] |■
+  0.035 [508]   |
+  0.046 [115]   |
+  0.058 [18]    |
+  0.069 [246]   |
+  0.081 [75]    |
+  0.092 [0]     |
+  0.104 [0]     |
+  0.115 [10]    |
+
+
+Latency distribution:
+  10% in 0.0005 secs
+  25% in 0.0010 secs
+  50% in 0.0035 secs
+  75% in 0.0064 secs
+  90% in 0.0086 secs
+  95% in 0.0104 secs
+  99% in 0.0152 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.1153 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0776 secs
+  resp wait:    0.0041 secs, 0.0001 secs, 0.0772 secs
+  resp read:    0.0001 secs, 0.0000 secs, 0.0577 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+
+###########################################################################
+
+7. proxied /foo with fabio 8 core, 1 instance 2 core
+
+Summary:
+  Total:        16.6727 secs
+  Slowest:      0.1435 secs
+  Fastest:      0.0001 secs
+  Average:      0.0042 secs
+  Requests/sec: 59969.5206
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.014 [994778]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.029 [4589]  |
+  0.043 [148]   |
+  0.057 [127]   |
+  0.072 [87]    |
+  0.086 [63]    |
+  0.100 [50]    |
+  0.115 [7]     |
+  0.129 [0]     |
+  0.144 [5]     |
+
+
+Latency distribution:
+  10% in 0.0011 secs
+  25% in 0.0021 secs
+  50% in 0.0039 secs
+  75% in 0.0055 secs
+  90% in 0.0075 secs
+  95% in 0.0092 secs
+  99% in 0.0126 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.1435 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0324 secs
+  resp wait:    0.0042 secs, 0.0001 secs, 0.0914 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0303 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+
+
+###########################################################################
+
+8. proxied /foo with fabio 8 core, 2 instance 2 core
+
+Summary:
+  Total:        16.0828 secs
+  Slowest:      0.1045 secs
+  Fastest:      0.0001 secs
+  Average:      0.0041 secs
+  Requests/sec: 62169.2256
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.011 [971653]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.021 [27260] |■
+  0.031 [400]   |
+  0.042 [279]   |
+  0.052 [37]    |
+  0.063 [96]    |
+  0.073 [78]    |
+  0.084 [21]    |
+  0.094 [0]     |
+  0.105 [30]    |
+
+
+Latency distribution:
+  10% in 0.0009 secs
+  25% in 0.0018 secs
+  50% in 0.0037 secs
+  75% in 0.0056 secs
+  90% in 0.0076 secs
+  95% in 0.0092 secs
+  99% in 0.0126 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.1045 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0393 secs
+  resp wait:    0.0040 secs, 0.0001 secs, 0.0790 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0595 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+###########################################################################
+
+9. proxied /foo with fabio 8 core, 4 instance 2 core
+
+hey -n 1000000 -c 255 http://127.0.0.1:9999/foo
+
+Summary:
+  Total:        15.4528 secs
+  Slowest:      0.0743 secs
+  Fastest:      0.0001 secs
+  Average:      0.0039 secs
+  Requests/sec: 64703.8253
+
+  Total data:   51992460 bytes
+  Size/request: 52 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.008 [912009]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.015 [85624] |■■■■
+  0.022 [1863]  |
+  0.030 [225]   |
+  0.037 [31]    |
+  0.045 [56]    |
+  0.052 [43]    |
+  0.059 [0]     |
+  0.067 [0]     |
+  0.074 [3]     |
+
+
+Latency distribution:
+  10% in 0.0009 secs
+  25% in 0.0017 secs
+  50% in 0.0035 secs
+  75% in 0.0055 secs
+  90% in 0.0073 secs
+  95% in 0.0087 secs
+  99% in 0.0122 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.0743 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0510 secs
+  resp wait:    0.0038 secs, 0.0001 secs, 0.0490 secs
+  resp read:    0.0000 secs, 0.0000 secs, 0.0508 secs
+
+Status code distribution:
+  [200] 999855 responses
 */

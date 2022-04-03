@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -16,6 +16,8 @@ import (
 )
 
 func main() {
+
+	const apiName = "handle1"
 	tStr := `_` + I.ToS(time.Now().UnixNano())
 	if len(os.Args) > 1 {
 		app := fiber.New()
@@ -41,13 +43,13 @@ func main() {
 					return nc
 				}
 				mutex.Lock()
+				defer mutex.Unlock()
 				if ncs[idx] != nil {
 					return ncs[idx]
 				}
 				nc, err := nats.Connect("127.0.0.1")
 				L.PanicIf(err, `nats.Connect`)
 				ncs[idx] = nc
-				mutex.Unlock()
 				return nc
 			}
 
@@ -61,7 +63,7 @@ func main() {
 
 			// handler
 			app.Get("/", func(c *fiber.Ctx) error {
-				msg, err := conn().Request("handle1", []byte(I.ToS(rand.Int63())), time.Second)
+				msg, err := conn().Request(apiName, []byte(I.ToS(rand.Int63())), time.Second)
 				if L.IsError(err, `nc.Request`) {
 					return err
 				}
@@ -83,20 +85,38 @@ func main() {
 		L.PanicIf(err, `nats.Connect`)
 		defer nc.Close()
 
-		// connect as reply on request-reply
-		sub, err := nc.SubscribeSync("handle1")
-		L.PanicIf(err, `nc.SubscribeSync`)
+		//// connect as reply on request-reply (sync)
+		//sub, err := nc.SubscribeSync("handle1")
+		//L.PanicIf(err, `nc.SubscribeSync`)
+		//
+		////Wait for a message
+		//for {
+		//	msg, err := sub.NextMsgWithContext(context.Background())
+		//	L.PanicIf(err, `sub.NextMsgWithContext`)
+		//
+		//	err = msg.Respond([]byte(string(msg.Data) + tStr))
+		//	L.PanicIf(err, `msg.Respond`)
+		//}
 
-		// Wait for a message
-		for {
-			msg, err := sub.NextMsgWithContext(context.Background())
-			L.PanicIf(err, `sub.NextMsgWithContext`)
+		//// channel (async) -- error slow consumer
+		//ch := make(chan *nats.Msg, 1)
+		//_, err = nc.ChanSubscribe(apiName, ch)
+		//L.PanicIf(err, `nc.ChanSubscribe`)
+		//for {
+		//	select {
+		//	case msg := <-ch:
+		//		L.PanicIf(msg.Respond([]byte(string(msg.Data)+tStr)), `msg.Respond`)
+		//	}
+		//}
 
-			err = msg.Respond([]byte(string(msg.Data) + tStr))
-			L.PanicIf(err, `msg.Respond`)
-		}
+		// callback (async)
+		_, err = nc.Subscribe(apiName, func(msg *nats.Msg) {
+			L.PanicIf(msg.Respond([]byte(string(msg.Data)+tStr)), `msg.Respond`)
+		})
 
-		// TODO: try channel and callback version, also try reponse using goroutine
+		var line string
+		fmt.Scanln(&line)
+
 	}
 }
 
@@ -754,57 +774,293 @@ Status code distribution:
 
 ###########################################################################
 
-13. apiproxy, 2 core 1 callback worker, single nats
+14. apiproxy, 1 callback worker, single nats
 
 hey -n 1000000 -c 255 http://127.0.0.1:3000
 
 Summary:
-  Total:        8.0867 secs
-  Slowest:      0.1232 secs
+  Total:        7.7495 secs
+  Slowest:      0.0717 secs
   Fastest:      0.0002 secs
-  Average:      0.0020 secs
-  Requests/sec: 123642.2649
+  Average:      0.0019 secs
+  Requests/sec: 129022.0704
 
-  Total data:   38873987 bytes
+  Total data:   38873880 bytes
   Size/request: 38 bytes
 
 Response time histogram:
   0.000 [1]     |
-  0.012 [999208]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.025 [350]   |
-  0.037 [86]    |
-  0.049 [95]    |
-  0.062 [0]     |
-  0.074 [0]     |
-  0.086 [72]    |
-  0.099 [11]    |
-  0.111 [0]     |
-  0.123 [32]    |
+  0.007 [989547]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.014 [10047] |
+  0.022 [50]    |
+  0.029 [0]     |
+  0.036 [70]    |
+  0.043 [9]     |
+  0.050 [0]     |
+  0.057 [0]     |
+  0.065 [0]     |
+  0.072 [131]   |
 
 
 Latency distribution:
   10% in 0.0006 secs
-  25% in 0.0007 secs
+  25% in 0.0008 secs
   50% in 0.0012 secs
-  75% in 0.0029 secs
-  90% in 0.0043 secs
-  95% in 0.0054 secs
-  99% in 0.0078 secs
+  75% in 0.0028 secs
+  90% in 0.0041 secs
+  95% in 0.0051 secs
+  99% in 0.0074 secs
 
 Details (average, fastest, slowest):
-  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.1232 secs
+  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.0717 secs
   DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
-  req write:    0.0000 secs, 0.0000 secs, 0.0843 secs
-  resp wait:    0.0008 secs, 0.0001 secs, 0.0850 secs
-  resp read:    0.0007 secs, 0.0000 secs, 0.1199 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0673 secs
+  resp wait:    0.0008 secs, 0.0001 secs, 0.0658 secs
+  resp read:    0.0006 secs, 0.0000 secs, 0.0337 secs
 
 Status code distribution:
   [200] 999855 responses
 
 ###########################################################################
 
-13. apiproxy, 2 core 4 callback worker, single nats
+15. apiproxy, 2 callback worker, single nats
 
-timedout a lot
+Summary:
+  Total:        8.5145 secs
+  Slowest:      0.0899 secs
+  Fastest:      0.0002 secs
+  Average:      0.0021 secs
+  Requests/sec: 117429.4612
+
+  Total data:   38874058 bytes
+  Size/request: 38 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.009 [998107]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.018 [1454]  |
+  0.027 [20]    |
+  0.036 [158]   |
+  0.045 [0]     |
+  0.054 [0]     |
+  0.063 [90]    |
+  0.072 [5]     |
+  0.081 [0]     |
+  0.090 [20]    |
+
+
+Latency distribution:
+  10% in 0.0008 secs
+  25% in 0.0011 secs
+  50% in 0.0017 secs
+  75% in 0.0028 secs
+  90% in 0.0039 secs
+  95% in 0.0048 secs
+  99% in 0.0069 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.0899 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0618 secs
+  resp wait:    0.0013 secs, 0.0002 secs, 0.0578 secs
+  resp read:    0.0005 secs, 0.0000 secs, 0.0616 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+###########################################################################
+
+16. apiproxy, 4 callback worker, single nats
+
+hey -n 1000000 -c 255 http://127.0.0.1:3000
+
+Summary:
+  Total:        11.5494 secs
+  Slowest:      0.0999 secs
+  Fastest:      0.0003 secs
+  Average:      0.0029 secs
+  Requests/sec: 86572.3655
+
+  Total data:   38873828 bytes
+  Size/request: 38 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.010 [999286]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.020 [216]   |
+  0.030 [24]    |
+  0.040 [204]   |
+  0.050 [0]     |
+  0.060 [8]     |
+  0.070 [96]    |
+  0.080 [0]     |
+  0.090 [0]     |
+  0.100 [20]    |
+
+
+Latency distribution:
+  10% in 0.0017 secs
+  25% in 0.0022 secs
+  50% in 0.0027 secs
+  75% in 0.0035 secs
+  90% in 0.0043 secs
+  95% in 0.0049 secs
+  99% in 0.0065 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0003 secs, 0.0999 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0667 secs
+  resp wait:    0.0025 secs, 0.0002 secs, 0.0661 secs
+  resp read:    0.0003 secs, 0.0000 secs, 0.0668 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+###########################################################################
+
+16. apiproxy 8 core, 1 callback worker 2 core, single nats
+
+hey -n 1000000 -c 255 http://127.0.0.1:3000
+
+Summary:
+  Total:        6.7422 secs
+  Slowest:      0.1099 secs
+  Fastest:      0.0002 secs
+  Average:      0.0017 secs
+  Requests/sec: 148298.8623
+
+  Total data:   38874001 bytes
+  Size/request: 38 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.011 [999220]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.022 [139]   |
+  0.033 [256]   |
+  0.044 [0]     |
+  0.055 [13]    |
+  0.066 [162]   |
+  0.077 [0]     |
+  0.088 [62]    |
+  0.099 [1]     |
+  0.110 [1]     |
+
+
+Latency distribution:
+  10% in 0.0006 secs
+  25% in 0.0007 secs
+  50% in 0.0011 secs
+  75% in 0.0023 secs
+  90% in 0.0035 secs
+  95% in 0.0044 secs
+  99% in 0.0064 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.1099 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0287 secs
+  resp wait:    0.0008 secs, 0.0001 secs, 0.0563 secs
+  resp read:    0.0005 secs, 0.0000 secs, 0.0307 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+###########################################################################
+
+17. apiproxy 8 core, 2 callback worker 2 core, single nats
+
+Summary:
+  Total:        6.9454 secs
+  Slowest:      0.0652 secs
+  Fastest:      0.0002 secs
+  Average:      0.0017 secs
+  Requests/sec: 143958.4056
+
+  Total data:   38873399 bytes
+  Size/request: 38 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.007 [998358]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.013 [1118]  |
+  0.020 [201]   |
+  0.026 [91]    |
+  0.033 [6]     |
+  0.039 [22]    |
+  0.046 [0]     |
+  0.052 [0]     |
+  0.059 [0]     |
+  0.065 [58]    |
+
+
+Latency distribution:
+  10% in 0.0010 secs
+  25% in 0.0012 secs
+  50% in 0.0016 secs
+  75% in 0.0021 secs
+  90% in 0.0027 secs
+  95% in 0.0032 secs
+  99% in 0.0047 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0002 secs, 0.0652 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0613 secs
+  resp wait:    0.0014 secs, 0.0002 secs, 0.0617 secs
+  resp read:    0.0002 secs, 0.0000 secs, 0.0133 secs
+
+Status code distribution:
+  [200] 999855 responses
+
+
+###########################################################################
+
+18. apiproxy 8 core, 4 callback worker 2 core, single nats
+
+hey -n 1000000 -c 255 http://127.0.0.1:3000
+
+Summary:
+  Total:        11.3045 secs
+  Slowest:      0.0880 secs
+  Fastest:      0.0003 secs
+  Average:      0.0029 secs
+  Requests/sec: 88447.5352
+
+  Total data:   38873232 bytes
+  Size/request: 38 bytes
+
+Response time histogram:
+  0.000 [1]     |
+  0.009 [998715]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.018 [576]   |
+  0.027 [54]    |
+  0.035 [296]   |
+  0.044 [5]     |
+  0.053 [6]     |
+  0.062 [103]   |
+  0.070 [2]     |
+  0.079 [0]     |
+  0.088 [97]    |
+
+
+Latency distribution:
+  10% in 0.0017 secs
+  25% in 0.0021 secs
+  50% in 0.0027 secs
+  75% in 0.0034 secs
+  90% in 0.0041 secs
+  95% in 0.0047 secs
+  99% in 0.0062 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:   0.0000 secs, 0.0003 secs, 0.0880 secs
+  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:    0.0000 secs, 0.0000 secs, 0.0821 secs
+  resp wait:    0.0025 secs, 0.0002 secs, 0.0291 secs
+  resp read:    0.0002 secs, 0.0000 secs, 0.0807 secs
+
+Status code distribution:
+  [200] 999855 responses
 
 */
