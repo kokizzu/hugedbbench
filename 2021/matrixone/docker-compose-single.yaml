@@ -1,0 +1,7 @@
+version: '3'
+  
+services:
+  matrixone1:
+    image: matrixorigin/matrixone:latest
+    ports:
+      - '6001:6001'
