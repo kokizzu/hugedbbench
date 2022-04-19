@@ -22,7 +22,8 @@ require (
 	github.com/tarantool/go-tarantool v0.0.0-20220201141139-c84ec853329c
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
+	github.com/yandex-cloud/ydb-go-sdk/v2 v2.12.0
+	golang.org/x/net v0.0.0-20220418201149-a630d4f3e7a2
 )
 
 require (
@@ -87,13 +88,17 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.34.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
+	github.com/yandex-cloud/go-genproto v0.0.0-20210809082946-a97da516c588 // indirect
+	github.com/ydb-platform/ydb-go-genproto v0.0.0-20220203104745-929cf9c248bc // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
-	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/genproto v0.0.0-20220414192740-2d67ff6cf2b4 // indirect
+	google.golang.org/grpc v1.45.0 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

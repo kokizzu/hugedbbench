@@ -10,6 +10,8 @@ clean-2021:
 	sudo rm -rf $(wildcard 2021/tidb/ti*/)
 	sudo du -hs $(wildcard 2021/yugabytedb/yb*/) 
 	sudo rm -rf $(wildcard 2021/yugabytedb/yb*/)
+	sudo du -hs $(wildcard 2021/ydb/ydb_*/) 
+	sudo rm -rf $(wildcard 2021/ydb/ydb_*/)
 
 clean-2021mq:
 	sudo du -hs $(wildcard 2021mq/kafka/*/)
