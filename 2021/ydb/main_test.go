@@ -70,6 +70,8 @@ func TestDb(t *testing.T) {
 
 	wg := sync.WaitGroup{}
 
+	// TODO: change to latest doc https://ydb.tech/en/docs/reference/ydb-sdk/example/go/
+
 	t.Run(`insert`, func(t *testing.T) {
 		for z := uint64(0); z < GoRoutineCount; z++ {
 			wg.Add(1)
