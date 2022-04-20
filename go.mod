@@ -22,8 +22,8 @@ require (
 	github.com/tarantool/go-tarantool v0.0.0-20220201141139-c84ec853329c
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
-	github.com/ydb-platform/ydb-go-sdk/v3 v3.20.2
-	golang.org/x/net v0.0.0-20220418201149-a630d4f3e7a2
+	github.com/ydb-platform/ydb-go-sdk/v3 v3.21.0
+	golang.org/x/net v0.0.0-20220420153159-1850ba15e1be
 )
 
 require (
@@ -95,7 +95,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220414192740-2d67ff6cf2b4 // indirect
+	google.golang.org/genproto v0.0.0-20220420195807-44278fea765b // indirect
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.2 // indirect

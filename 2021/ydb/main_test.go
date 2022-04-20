@@ -14,6 +14,7 @@ import (
 	"github.com/ydb-platform/ydb-go-sdk/v3"
 	"github.com/ydb-platform/ydb-go-sdk/v3/table"
 	"github.com/ydb-platform/ydb-go-sdk/v3/table/options"
+	"github.com/ydb-platform/ydb-go-sdk/v3/table/result/named"
 	"github.com/ydb-platform/ydb-go-sdk/v3/table/types"
 )
 
@@ -55,11 +56,12 @@ func TestDb(t *testing.T) {
 
 	// start benchmarking
 
-	_, _, _ = session.Execute(ctx, txc, `DROP TABLE IF EXISTS bar1`, nil)
-
 	err = db.Table().Do(
 		ctx, func(ctx context.Context, s table.Session) error {
-			return s.CreateTable(ctx, path.Join(db.Name(), `bar1`),
+			tableName := path.Join(db.Name(), `bar1`)
+			err := s.DropTable(ctx, tableName)
+			L.Print(err) // ignore error if first time
+			return s.CreateTable(ctx, tableName,
 				options.WithColumn(`id`, types.Optional(types.TypeUint64)),
 				options.WithColumn(`foo`, types.Optional(types.TypeUTF8)),
 				options.WithPrimaryKeyColumn(`id`),
@@ -70,15 +72,21 @@ func TestDb(t *testing.T) {
 
 	wg := sync.WaitGroup{}
 
-	// TODO: change to latest doc https://ydb.tech/en/docs/reference/ydb-sdk/example/go/
+	// https://ydb.tech/en/docs/reference/ydb-sdk/example/go/
 
 	t.Run(`insert`, func(t *testing.T) {
 		for z := uint64(0); z < GoRoutineCount; z++ {
 			wg.Add(1)
 			go func(z uint64) {
+				session, err := db.Table().CreateSession(ctx)
+				L.PanicIf(err, `db.Table().CreateSession`)
+				defer session.Close(ctx)
 				for y := uint64(0); y < RecordsPerGoroutine; y++ {
 					uniq := id64.SID()
-					_, _, err = session.Execute(ctx, txc, `INSERT INTO bar1(id,foo) VALUES($id,$foo)`,
+					_, _, err = session.Execute(ctx, txc, `
+Declare $id AS Uint64;
+Declare $foo AS Utf8;
+INSERT INTO bar1(id,foo) VALUES($id,$foo)`,
 						table.NewQueryParameters(
 							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
 							table.ValueParam(`$foo`, types.UTF8Value(uniq)),
@@ -95,15 +103,20 @@ func TestDb(t *testing.T) {
 	fmt.Println(DbName+` InsertOne`, time.Since(start))
 	start = time.Now()
 
-	_, row, err := session.Execute(ctx, txc, `SELECT COUNT(1) AS cou FROM bar1`, nil)
-	L.PanicIf(err, `failed select count(1) from bar1`)
-	count := 0
-	if row.NextResultSet(ctx, `cou`) {
-		err = row.Scan(&count)
-		L.PanicIf(err, `failed query count/scan`)
+	count := func() {
+		_, res, err := session.Execute(ctx, txc, `SELECT COUNT(1) AS cou FROM bar1`, nil)
+		L.PanicIf(err, `failed select count(1) from bar1`)
+		defer res.Close()
+		count := uint64(0)
+		err = res.NextResultSetErr(ctx)
+		L.PanicIf(err, `failed next result set`)
+		if res.NextRow() {
+			err = res.ScanNamed(named.Required(`cou`, &count))
+			L.PanicIf(err, `failed query count/scan`)
+		}
+		assert.Equal(t, GoRoutineCount*RecordsPerGoroutine, int(count))
 	}
-	L.PanicIf(row.Err(), `row.NextResultSet`)
-	assert.Equal(t, GoRoutineCount*RecordsPerGoroutine, count)
+	count()
 
 	fmt.Println(DbName+` Count`, time.Since(start))
 	start = time.Now()
@@ -112,9 +125,15 @@ func TestDb(t *testing.T) {
 		for z := uint64(0); z < GoRoutineCount; z++ {
 			wg.Add(1)
 			go func(z uint64) {
+				session, err := db.Table().CreateSession(ctx)
+				L.PanicIf(err, `db.Table().CreateSession`)
+				defer session.Close(ctx)
 				for y := uint64(0); y < RecordsPerGoroutine; y++ {
 					uniq := id64.SID()
-					_, _, err = session.Execute(ctx, txc, `UPDATE bar1 SET foo=$foo WHERE id=$id`,
+					_, _, err = session.Execute(ctx, txc, `
+Declare $id AS Uint64;
+Declare $foo AS Utf8;
+UPDATE bar1 SET foo=$foo WHERE id=$id`,
 						table.NewQueryParameters(
 							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
 							table.ValueParam(`$foo`, types.UTF8Value(uniq)),
@@ -131,15 +150,7 @@ func TestDb(t *testing.T) {
 	fmt.Println(DbName+` UpdateOne`, time.Since(start))
 	start = time.Now()
 
-	_, row, err = session.Execute(ctx, txc, `SELECT COUNT(1) AS cou FROM bar1`, nil)
-	L.PanicIf(err, `failed select count(1) from bar1`)
-	count = 0
-	if row.NextResultSet(ctx, `cou`) {
-		err = row.Scan(&count)
-		L.PanicIf(err, `failed query count/scan`)
-	}
-	L.PanicIf(row.Err(), `row.NextResultSet`)
-	assert.Equal(t, GoRoutineCount*RecordsPerGoroutine, count)
+	count()
 
 	fmt.Println(DbName+` Count`, time.Since(start))
 	start = time.Now()
@@ -148,16 +159,26 @@ func TestDb(t *testing.T) {
 		for z := uint64(0); z < GoRoutineCount; z++ {
 			wg.Add(1)
 			go func(z uint64) {
+				session, err := db.Table().CreateSession(ctx)
+				L.PanicIf(err, `db.Table().CreateSession`)
+				defer session.Close(ctx)
 				var str string
 				for y := uint64(0); y < RecordsPerGoroutine; y++ {
-					_, row, err := session.Execute(ctx, txc, `SELECT foo FROM bar1 WHERE id=$id`,
+					_, res, err := session.Execute(ctx, txc, `
+Declare $id AS Uint64;
+SELECT foo FROM bar1 WHERE id=$id`,
 						table.NewQueryParameters(
 							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
 						),
 					)
-					L.PanicIf(err, `failed select foo from bar1`)
-					err = row.Scan(&str)
-					L.PanicIf(err, `failed select bar1`)
+					err = res.NextResultSetErr(ctx)
+					L.PanicIf(err, `failed next result set`)
+					if res.NextRow() {
+						//err = res.Scan(&str) //  {s:"scan row failed: type *string is not optional! use double pointer or sql.Scanner."},
+						err = res.ScanNamed(named.Required(`foo`, &str)) // {s:"scan row failed: incorrect source types PRIMITIVE_TYPE_ID_UNSPECIFIED"},
+						L.PanicIf(err, `failed scan bar1`)
+					}
+					_ = res.Close()
 				}
 				wg.Done()
 			}(z)
@@ -169,3 +190,10 @@ func TestDb(t *testing.T) {
 	start = time.Now()
 
 }
+
+/*
+Insert
+YDB InsertOne 1m2.288097784s
+Update
+Delete
+*/
