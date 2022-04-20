@@ -162,7 +162,7 @@ UPDATE bar1 SET foo=$foo WHERE id=$id`,
 				session, err := db.Table().CreateSession(ctx)
 				L.PanicIf(err, `db.Table().CreateSession`)
 				defer session.Close(ctx)
-				var str string
+				var str *string // must add pointer
 				for y := uint64(0); y < RecordsPerGoroutine; y++ {
 					_, res, err := session.Execute(ctx, txc, `
 Declare $id AS Uint64;
@@ -174,8 +174,9 @@ SELECT foo FROM bar1 WHERE id=$id`,
 					err = res.NextResultSetErr(ctx)
 					L.PanicIf(err, `failed next result set`)
 					if res.NextRow() {
+						err = res.Scan(&str) // works when str is a pointer to string
 						//err = res.Scan(&str) //  {s:"scan row failed: type *string is not optional! use double pointer or sql.Scanner."},
-						err = res.ScanNamed(named.Required(`foo`, &str)) // {s:"scan row failed: incorrect source types PRIMITIVE_TYPE_ID_UNSPECIFIED"},
+						//err = res.ScanNamed(named.Required(`foo`, &str)) // {s:"scan row failed: incorrect source types PRIMITIVE_TYPE_ID_UNSPECIFIED"},
 						L.PanicIf(err, `failed scan bar1`)
 					}
 					_ = res.Close()
@@ -191,9 +192,12 @@ SELECT foo FROM bar1 WHERE id=$id`,
 
 }
 
-/*
-Insert
-YDB InsertOne 1m2.288097784s
-Update
-Delete
+/* benchmark result:
+YDB InsertOne 1m2.203654718s
+YDB Count 15.139201ms
+YDB UpdateOne 1m11.049503884s
+YDB Count 25.023836ms
+YDB SelectOne 11.580145895s
+YDB Total 2m24.874077468s
+6.4G    2021/ydb/ydb_data/
 */
