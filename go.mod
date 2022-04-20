@@ -22,7 +22,7 @@ require (
 	github.com/tarantool/go-tarantool v0.0.0-20220201141139-c84ec853329c
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
-	github.com/yandex-cloud/ydb-go-sdk/v2 v2.12.0
+	github.com/ydb-platform/ydb-go-sdk/v3 v3.20.2
 	golang.org/x/net v0.0.0-20220418201149-a630d4f3e7a2
 )
 
@@ -88,7 +88,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.34.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	github.com/yandex-cloud/go-genproto v0.0.0-20210809082946-a97da516c588 // indirect
 	github.com/ydb-platform/ydb-go-genproto v0.0.0-20220203104745-929cf9c248bc // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect

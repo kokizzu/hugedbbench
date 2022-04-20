@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"path"
 	"sync"
 	"testing"
 	"time"
@@ -10,9 +11,10 @@ import (
 	"github.com/kokizzu/gotro/L"
 	"github.com/kokizzu/id64"
 	"github.com/stretchr/testify/assert"
-	"github.com/yandex-cloud/ydb-go-sdk/v2"
-	"github.com/yandex-cloud/ydb-go-sdk/v2/connect"
-	"github.com/yandex-cloud/ydb-go-sdk/v2/table"
+	"github.com/ydb-platform/ydb-go-sdk/v3"
+	"github.com/ydb-platform/ydb-go-sdk/v3/table"
+	"github.com/ydb-platform/ydb-go-sdk/v3/table/options"
+	"github.com/ydb-platform/ydb-go-sdk/v3/table/types"
 )
 
 // docker-compose -f docker-compose-single.yaml up
@@ -33,16 +35,15 @@ func TestDb(t *testing.T) {
 	connectCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	db, err := connect.New(
+	db, err := ydb.New(
 		connectCtx,
-		connect.MustConnectionString(
-			"grpc://127.0.0.1:2136/?database=/local",
-		),
+		ydb.WithConnectionString("grpc://127.0.0.1:2136/?database=/local"),
+		ydb.WithAnonymousCredentials(),
 	)
 	L.PanicIf(err, `connect.New`)
-	defer db.Close()
-
 	ctx := context.Background()
+	defer db.Close(ctx)
+
 	session, err := db.Table().CreateSession(ctx)
 	L.PanicIf(err, `db.Table().CreateSession`)
 	defer session.Close(ctx)
@@ -56,13 +57,15 @@ func TestDb(t *testing.T) {
 
 	_, _, _ = session.Execute(ctx, txc, `DROP TABLE IF EXISTS bar1`, nil)
 
-	_, _, err = session.Execute(ctx, txc, `
-CREATE TABLE bar1(
-	id Uint64, 
-	foo Utf8, 
-	INDEX idx_foo GLOBAL ON (foo),
-	PRIMARY KEY(id)
-)`, nil)
+	err = db.Table().Do(
+		ctx, func(ctx context.Context, s table.Session) error {
+			return s.CreateTable(ctx, path.Join(db.Name(), `bar1`),
+				options.WithColumn(`id`, types.Optional(types.TypeUint64)),
+				options.WithColumn(`foo`, types.Optional(types.TypeUTF8)),
+				options.WithPrimaryKeyColumn(`id`),
+				options.WithIndex(`idx_foo`, options.WithIndexColumns(`foo`)),
+			)
+		})
 	L.PanicIf(err, `failed create table bar1`) // no UNIQUE index supported
 
 	wg := sync.WaitGroup{}
@@ -75,8 +78,8 @@ CREATE TABLE bar1(
 					uniq := id64.SID()
 					_, _, err = session.Execute(ctx, txc, `INSERT INTO bar1(id,foo) VALUES($id,$foo)`,
 						table.NewQueryParameters(
-							table.ValueParam(`$id`, ydb.Uint64Value(z*RecordsPerGoroutine+y)),
-							table.ValueParam(`$foo`, ydb.UTF8Value(uniq)),
+							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
+							table.ValueParam(`$foo`, types.UTF8Value(uniq)),
 						),
 					)
 					L.PanicIf(err, `failed insert to bar1`)
@@ -111,8 +114,8 @@ CREATE TABLE bar1(
 					uniq := id64.SID()
 					_, _, err = session.Execute(ctx, txc, `UPDATE bar1 SET foo=$foo WHERE id=$id`,
 						table.NewQueryParameters(
-							table.ValueParam(`$id`, ydb.Uint64Value(z*RecordsPerGoroutine+y)),
-							table.ValueParam(`$foo`, ydb.UTF8Value(uniq)),
+							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
+							table.ValueParam(`$foo`, types.UTF8Value(uniq)),
 						),
 					)
 					L.PanicIf(err, `failed update bar1`)
@@ -147,7 +150,7 @@ CREATE TABLE bar1(
 				for y := uint64(0); y < RecordsPerGoroutine; y++ {
 					_, row, err := session.Execute(ctx, txc, `SELECT foo FROM bar1 WHERE id=$id`,
 						table.NewQueryParameters(
-							table.ValueParam(`$id`, ydb.Uint64Value(z*RecordsPerGoroutine+y)),
+							table.ValueParam(`$id`, types.Uint64Value(z*RecordsPerGoroutine+y)),
 						),
 					)
 					L.PanicIf(err, `failed select foo from bar1`)
