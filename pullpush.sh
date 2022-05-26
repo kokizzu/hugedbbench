@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -e # exit on error
 
 if [ $# -eq 0 ] ; then
   echo "Usage: 
