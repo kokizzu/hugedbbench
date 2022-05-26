@@ -3,12 +3,12 @@ package wcFoo
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 
 import (
-	`hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo`
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo"
 
-	`github.com/kokizzu/gotro/A`
-	`github.com/kokizzu/gotro/D/Tt`
-	`github.com/kokizzu/gotro/L`
-	`github.com/kokizzu/gotro/X`
+	"github.com/kokizzu/gotro/A"
+	"github.com/kokizzu/gotro/D/Tt"
+	"github.com/kokizzu/gotro/L"
+	"github.com/kokizzu/gotro/X"
 )
 
 //go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file wcFoo__ORM.GEN.go
@@ -95,4 +95,3 @@ func (f *FooMutator) SetWhen(val uint64) bool { //nolint:dupl false positive
 }
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
-

@@ -86,7 +86,7 @@ func main() {
 	if !tt.TruncateTable(TOPIC) {
 		panic(`tt.TruncateTable`)
 	}
-	
+
 	wgConsume := &sync.WaitGroup{}
 	wgConsume.Add(PRODUCERS * MSGS) // includes consuming
 	failConsume := int64(0)
@@ -95,7 +95,7 @@ func main() {
 	maxLatency := int64(0)
 	consumed := int64(0)
 	consume := sync.Map{}
-	
+
 	go func() {
 		lastFetch := int64(0)
 		rq := rqFoo.NewFoo(tt)
@@ -113,7 +113,7 @@ func main() {
 				// single processing
 				if _, exists := consume.LoadOrStore(idx, struct{}{}); !exists {
 					dur := time.Now().UnixNano()/1000/1000 - createdAt/1000/1000 // millisecond
-					atomic.AddInt64(&durConsume, dur) // bottleneck, TODO: change to channel
+					atomic.AddInt64(&durConsume, dur)                            // bottleneck, TODO: change to channel
 					for {
 						old := maxLatency
 						if dur <= old {
@@ -133,13 +133,13 @@ func main() {
 			}
 		}
 	}()
-	
+
 	wgProduce := &sync.WaitGroup{}
 	wgProduce.Add(PRODUCERS * MSGS)
 	failProduce := int64(0)
 	durProduce := int64(0)
 	produced := int64(0)
-	
+
 	startProduce := time.Now().UnixNano()
 	for z := 0; z < PRODUCERS; z++ {
 		go func(z int) {
@@ -158,11 +158,11 @@ func main() {
 			}
 		}(z)
 	}
-	
+
 	wgProduce.Wait()
 	durProduce = time.Now().UnixNano() - startProduce
 	wgConsume.Wait()
-	
+
 	fmt.Println(`FailProduce: `, failProduce)
 	fmt.Println(`FailConsume: `, failConsume)
 	fmt.Println(`DoubleConsume: `, doubleConsume)

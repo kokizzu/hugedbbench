@@ -25,20 +25,18 @@ pre-config:
 fs.aio-max-nr = 4194304
 
 sudo sysctl -p
- */
-
+*/
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
 // docker exec -it $(docker ps | grep redpanda1 | cut -d ' ' -f 1) rpk topic create foo
 
 // docker-compose -f docker-compose-multi.yaml up --remove-orphans
-// docker exec -it $(docker ps | grep redpanda1 | cut -d ' ' -f 1) rpk topic create foo 
-
+// docker exec -it $(docker ps | grep redpanda1 | cut -d ' ' -f 1) rpk topic create foo
 
 func main() {
 	startBenchmark := time.Now()
 	//seeds := []string{"localhost:9092"}
-	seeds := []string{"localhost:9092","localhost:9093","localhost:9094"}
+	seeds := []string{"localhost:9092", "localhost:9093", "localhost:9094"}
 	cl, err := kgo.NewClient(
 		kgo.SeedBrokers(seeds...),
 		kgo.ConsumerGroup("group1"),
@@ -76,7 +74,7 @@ func main() {
 							atomic.AddInt64(&failConsume, 1)
 							L.Print(err)
 						}
-						if _, exists := consume.LoadOrStore(m.GetInt(`idx`),struct{}{}) ; !exists {
+						if _, exists := consume.LoadOrStore(m.GetInt(`idx`), struct{}{}); !exists {
 							dur := time.Now().UnixNano() - m.GetInt(`when`)
 							atomic.AddInt64(&durConsume, dur) // bottleneck, TODO: change to channel
 							for {
@@ -102,7 +100,7 @@ func main() {
 	}()
 
 	wgProduce := &sync.WaitGroup{}
-	wgProduce.Add(PRODUCERS * MSGS) 
+	wgProduce.Add(PRODUCERS * MSGS)
 	failProduce := int64(0)
 	durProduce := int64(0)
 	produced := int64(0)
@@ -113,8 +111,8 @@ func main() {
 			//fmt.Println(`Producer spawned`, z)
 			for y := 0; y < MSGS; y++ {
 				record := &kgo.Record{Topic: TOPIC, Value: []byte(M.SX{
-					`when`:time.Now().UnixNano(),
-					`idx`: z * MSGS + y,
+					`when`: time.Now().UnixNano(),
+					`idx`:  z*MSGS + y,
 				}.ToJson())}
 				cl.Produce(context.Background(), record, func(_ *kgo.Record, err error) {
 					defer wgProduce.Done()
@@ -124,7 +122,7 @@ func main() {
 						L.Print(err)
 						return
 					}
-					if atomic.AddInt64(&produced, 1) % PROGRESS == 0 {
+					if atomic.AddInt64(&produced, 1)%PROGRESS == 0 {
 						//fmt.Print("P")
 					}
 				})

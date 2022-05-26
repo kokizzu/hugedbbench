@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/consul/api v1.7.0
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
-	github.com/kokizzu/gotro v1.1725.2030
+	github.com/kokizzu/gotro v1.1726.1634
 	github.com/kokizzu/id64 v1.1114.1245
 	github.com/manticoresoftware/go-sdk v0.0.0-20200819180014-70a49dc3179d
 	github.com/meilisearch/meilisearch-go v0.19.0
@@ -70,7 +70,7 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/mapstructure v1.4.3 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.7.4 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

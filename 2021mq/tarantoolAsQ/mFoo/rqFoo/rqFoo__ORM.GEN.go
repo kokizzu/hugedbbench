@@ -3,14 +3,14 @@ package rqFoo
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 
 import (
-	`hugedbbench/2021mq/tarantoolAsQ/mFoo`
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo"
 
-	`github.com/tarantool/go-tarantool`
+	"github.com/tarantool/go-tarantool"
 
-	`github.com/kokizzu/gotro/A`
-	`github.com/kokizzu/gotro/D/Tt`
-	`github.com/kokizzu/gotro/L`
-	`github.com/kokizzu/gotro/X`
+	"github.com/kokizzu/gotro/A"
+	"github.com/kokizzu/gotro/D/Tt"
+	"github.com/kokizzu/gotro/L"
+	"github.com/kokizzu/gotro/X"
 )
 
 //go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file rqFoo__ORM.GEN.go
@@ -21,8 +21,8 @@ import (
 
 type Foo struct {
 	Adapter *Tt.Adapter `json:"-" msg:"-" query:"-" form:"-"`
-	Id   uint64
-	When uint64
+	Id      uint64
+	When    uint64
 }
 
 func NewFoo(adapter *Tt.Adapter) *Foo {
@@ -101,7 +101,7 @@ func (f *Foo) FromArray(a A.X) *Foo { //nolint:dupl false positive
 }
 
 func (f *Foo) Total() int64 { //nolint:dupl false positive
-	rows := f.Adapter.CallBoxSpace(f.SpaceName() + `:count`, A.X{})
+	rows := f.Adapter.CallBoxSpace(f.SpaceName()+`:count`, A.X{})
 	if len(rows) > 0 && len(rows[0]) > 0 {
 		return X.ToI(rows[0][0])
 	}
@@ -109,4 +109,3 @@ func (f *Foo) Total() int64 { //nolint:dupl false positive
 }
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
-

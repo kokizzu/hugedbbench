@@ -27,7 +27,7 @@ func TestDb(t *testing.T) {
 	defer func(start time.Time) {
 		fmt.Println(DbName+` Total`, time.Since(start))
 	}(start)
-	
+
 	bg := context.Background() // shared context
 	pgUrl := "postgres://%s:%s@%s:%d/%s"
 	pgUrl = fmt.Sprintf(pgUrl,
@@ -63,7 +63,7 @@ func TestDb(t *testing.T) {
 		}
 		wg.Wait()
 	})
-	
+
 	fmt.Println(DbName+` InsertOne`, time.Since(start))
 	start = time.Now()
 
@@ -72,7 +72,7 @@ func TestDb(t *testing.T) {
 	err = row.Scan(&count)
 	L.PanicIf(err, `failed query count/scan`)
 	assert.Equal(t, GoRoutineCount*RecordsPerGoroutine, count)
-	
+
 	fmt.Println(DbName+` Count`, time.Since(start))
 	start = time.Now()
 
@@ -89,7 +89,7 @@ func TestDb(t *testing.T) {
 		}
 		wg.Wait()
 	})
-	
+
 	fmt.Println(DbName+` UpdateOne`, time.Since(start))
 	start = time.Now()
 
@@ -98,11 +98,10 @@ func TestDb(t *testing.T) {
 	err = row.Scan(&count)
 	L.PanicIf(err, `failed query count/scan`)
 	assert.Equal(t, GoRoutineCount*RecordsPerGoroutine, count)
-	
-	
+
 	fmt.Println(DbName+` Count`, time.Since(start))
 	start = time.Now()
-	
+
 	t.Run(`select`, func(t *testing.T) {
 		for z := 0; z < GoRoutineCount; z++ {
 			wg.Add(1)
@@ -118,7 +117,7 @@ func TestDb(t *testing.T) {
 		}
 		wg.Wait()
 	})
-	
+
 	fmt.Println(DbName+` SelectOne`, time.Since(start))
 	start = time.Now()
 }

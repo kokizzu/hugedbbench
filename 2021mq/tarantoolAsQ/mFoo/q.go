@@ -17,7 +17,7 @@ var TarantoolTables = map[Tt.TableName]*Tt.TableProp{
 			{When, Tt.Unsigned},
 		},
 		AutoIncrementId: true,
-		Engine:        Tt.Memtx,
+		Engine:          Tt.Memtx,
 		//Engine:        Tt.Vinyl,
 	},
 }

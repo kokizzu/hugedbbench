@@ -18,7 +18,7 @@ const TOPIC = `foo`
 const PROGRESS = 10000
 
 // docker-compose -f docker-compose.yaml up --remove-orphans
-// docker exec -it 5ef0b3b007c0 clickhouse client  
+// docker exec -it 5ef0b3b007c0 clickhouse client
 
 // verify
 //  docker exec -it $(docker ps|grep clickhouse| cut -d ' ' -f 1) clickhouse client
@@ -27,14 +27,14 @@ const PROGRESS = 10000
 func main() {
 	startBenchmark := time.Now()
 	//seeds := []string{"localhost:9092"}
-	
+
 	conn, err := sql.Open("clickhouse", "tcp://127.0.0.1:9000") // ?debug=true
 	L.PanicIf(err, `cannot connect db`)
 	conn.SetConnMaxLifetime(time.Minute * 3)
 	conn.SetMaxOpenConns(1024)
 	conn.SetMaxIdleConns(1024)
 	defer conn.Close()
-	
+
 	_, err = conn.Exec(`DROP TABLE IF EXISTS foo`)
 	L.PanicIf(err, `drop table`)
 
@@ -49,7 +49,7 @@ ORDER BY idx`)
 
 	_, err = conn.Exec(`TRUNCATE TABLE foo`)
 	L.PanicIf(err, `failed truncate table foo`)
-	
+
 	row := conn.QueryRow(`SELECT COUNT(*) FROM foo FINAL`) // force truncate
 	L.PanicIf(row.Err(), `force truncate`)
 
@@ -117,7 +117,7 @@ ORDER BY idx`)
 	startProduce := time.Now().UnixNano()
 	tb := chBuffer.NewTimedBuffer(conn, 600000, 1*time.Second, func(tx *sql.Tx) *sql.Stmt {
 		stmt, err := tx.Prepare(`INSERT INTO foo(createdAt) VALUES(?)`)
-		L.IsError(err,`tx.Prepare`)
+		L.IsError(err, `tx.Prepare`)
 		return stmt
 	})
 	for z := 0; z < PRODUCERS; z++ {
