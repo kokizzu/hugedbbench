@@ -8,14 +8,14 @@ require (
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
 	github.com/fabiolb/fabio v1.5.15
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/gofiber/fiber/v2 v2.25.0
+	github.com/gofiber/fiber/v2 v2.34.0
 	github.com/hashicorp/consul/api v1.7.0
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
-	github.com/kokizzu/gotro v1.1726.1634
-	github.com/kokizzu/id64 v1.1114.1245
+	github.com/kokizzu/gotro v1.1726.1724
+	github.com/kokizzu/id64 v1.1726.1650
 	github.com/manticoresoftware/go-sdk v0.0.0-20200819180014-70a49dc3179d
-	github.com/meilisearch/meilisearch-go v0.19.0
+	github.com/meilisearch/meilisearch-go v0.19.1
 	github.com/nats-io/nats.go v1.13.1-0.20220308171302-2f2f6968e98d
 	github.com/olivere/elastic/v7 v7.0.32
 	github.com/stretchr/testify v1.7.1
@@ -64,7 +64,6 @@ require (
 	github.com/kpango/fastime v1.1.4 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/lib/pq v1.10.6 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect

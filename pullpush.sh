@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ $# -eq 0 ] ; then
   echo "Usage: 
   ./pullpush.sh 'the commit message'"
@@ -7,12 +9,12 @@ if [ $# -eq 0 ] ; then
 fi
 
 # format indentation
-go fmt ./...
+goimports -w **/*.go
 echo "codes formatted.."
 
 # update deps
 go get -u -v github.com/kokizzu/gotro@latest
-go mod tidy -v
+go mod tidy
 
 # add and commit all files
 git add .
