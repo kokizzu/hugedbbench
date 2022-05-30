@@ -28,3 +28,15 @@ clean-2021mq:
 	sudo rm -rf $(wildcard 2021mq/clickhouseAsQ/c*/)
 	sudo du -hs $(wildcard 2021mq/jetstream/*/)
 	sudo rm -rf $(wildcard 2021mq/jetstream/*/)
+
+clean-2022fts:
+	sudo du -hs $(wildcard 2022fts/elasticsearch/elasticsearchdata/*/)
+	sudo rm -rf $(wildcard 2022fts/elasticsearch/elasticsearchdata/nodes*/)
+	sudo du -hs $(wildcard 2022fts/manticoresearch/manticoresearchdata/*/)
+	sudo rm -rf $(wildcard 2022fts/manticoresearch/manticoresearchdata/*)
+	sudo du -hs $(wildcard 2022fts/meilisearch/meilisearchdata/*/)
+	sudo rm -rf $(wildcard 2022fts/meilisearch/meilisearchdata/*)
+	sudo du -hs $(wildcard 2022fts/redisearch/redisearchdata/*/)
+	sudo rm -rf $(wildcard 2022fts/redisearch/redisearchdata/*)
+	sudo du -hs $(wildcard 2022fts/typesense/typesensedata/*/)
+	sudo rm -rf $(wildcard 2022fts/typesense/typesensedata/*)

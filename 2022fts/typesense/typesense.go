@@ -1,11 +1,16 @@
-package typesense
+package main
 
 import (
+	"fmt"
+	"hugedbbench/2022fts/datasets"
+	"log"
 	"time"
 
 	"github.com/typesense/typesense-go/typesense"
 	"github.com/typesense/typesense-go/typesense/api"
 )
+
+const FtsName = `typesense`
 
 func main() {
 	client := typesense.NewClient(
@@ -16,265 +21,112 @@ func main() {
 		typesense.WithCircuitBreakerInterval(2*time.Minute),
 		typesense.WithCircuitBreakerTimeout(1*time.Minute),
 	)
-
 	//Create a collection
 
 	yes := true
-	sortField := "num_employees"
+	// sortField := "num_employees"
+	indexName := `UrbanDictionary`
+	// udict := datasets.LoadUrbanDictionaryDatasets()[:100000]
 	schema := &api.CollectionSchema{
-		Name: "companies",
+		Name: indexName,
 		Fields: []api.Field{
 			{
-				Name: "company_name",
+				Name: "word_id",
 				Type: "string",
 			},
 			{
-				Name: "num_employees",
-				Type: "int32",
+				Name:  "word",
+				Type:  "string",
+				Index: &yes,
 			},
 			{
-				Name:  "country",
+				Name: "up_votes",
+				Type: "string",
+			},
+			{
+				Name: "down_votes",
+				Type: "string",
+			},
+			{
+				Name:  "author",
+				Type:  "string",
+				Index: &yes,
+			},
+			{
+				Name:  "definition",
 				Type:  "string",
 				Facet: &yes,
+				Index: &yes,
 			},
 		},
-		DefaultSortingField: &sortField,
+		// DefaultSortingField: &sortField,
 	}
-
+	client.Collection(indexName).Delete()
 	client.Collections().Create(schema)
 
 	//Index a document
 
-	document := struct {
-		ID           string `json:"id"`
-		CompanyName  string `json:"company_name"`
-		NumEmployees int    `json:"num_employees"`
-		Country      string `json:"country"`
-	}{
-		ID:           "123",
-		CompanyName:  "Stark Industries",
-		NumEmployees: 5215,
-		Country:      "USA",
-	}
-
-	client.Collection("companies").Documents().Create(document)
-
-	//Upserting a document
-
-	newDocument := struct {
-		ID           string `json:"id"`
-		CompanyName  string `json:"company_name"`
-		NumEmployees int    `json:"num_employees"`
-		Country      string `json:"country"`
-	}{
-		ID:           "123",
-		CompanyName:  "Stark Industries",
-		NumEmployees: 5215,
-		Country:      "USA",
-	}
-
-	client.Collection("companies").Documents().Upsert(newDocument)
-
-	//Search a collection
-
-	filterBy := "num_employees:>100"
-	sortBy := "num_employees:desc"
-	searchParameters := &api.SearchCollectionParams{
-		Q:        "stark",
-		QueryBy:  "company_name",
-		FilterBy: &filterBy,
-		SortBy:   &sortBy,
-	}
-
-	client.Collection("companies").Documents().Search(searchParameters)
-
-	//Retrieve a document
-
-	client.Collection("companies").Document("123").Retrieve()
-
-	//Update a document
-
-	document2 := struct {
-		CompanyName  string `json:"company_name"`
-		NumEmployees int    `json:"num_employees"`
-	}{
-		CompanyName:  "Stark Industries",
-		NumEmployees: 5500,
-	}
-
-	client.Collection("companies").Document("123").Update(document2)
-
-	//Delete an individual document
-
-	client.Collection("companies").Document("123").Delete()
-
-	//Delete a bunch of documents
-
-	filterBy = "num_employees:>100"
-	batchSize := 100
-	filter := &api.DeleteDocumentsParams{FilterBy: &filterBy, BatchSize: &batchSize}
-	client.Collection("companies").Documents().Delete(filter)
-
-	//Retrieve a collection
-
-	client.Collection("companies").Retrieve()
-
-	//Export documents from a collection
-
-	client.Collection("companies").Documents().Export()
-
-	//Import an array of documents:
-
-	documents := []interface{}{
-		struct {
-			ID           string `json:"id"`
-			CompanyName  string `json:"companyName"`
-			NumEmployees int    `json:"numEmployees"`
-			Country      string `json:"country"`
-		}{
-			ID:           "123",
-			CompanyName:  "Stark Industries",
-			NumEmployees: 5215,
-			Country:      "USA",
-		},
-	}
-	action := "create"
-	batchSize = 40
-	params := &api.ImportDocumentsParams{
-		Action:    &action,
-		BatchSize: &batchSize,
-	}
-
-	client.Collection("companies").Documents().Import(documents, params)
-
-	//Import a JSONL file:
-	/*
-		params := &api.ImportDocumentsParams{
-			Action:    "create",
-			BatchSize: 40,
+	// document := struct {
+	// 	ID           string `json:"id"`
+	// 	CompanyName  string `json:"company_name"`
+	// 	NumEmployees int    `json:"num_employees"`
+	// 	Country      string `json:"country"`
+	// }{
+	// 	ID:           "123",
+	// 	CompanyName:  "Stark Industries",
+	// 	NumEmployees: 5215,
+	// 	Country:      "USA",
+	// }
+	reader := datasets.UrbanDictionaryReader{SkipHeader: true}
+	insertDuration := []int{}
+	for {
+		datasets, _, err := reader.ReadNextNLines(100)
+		start := time.Now()
+		toArrInterface := make([]interface{}, len(datasets))
+		for idx, v := range datasets {
+			toArrInterface[idx] = v
 		}
-		importBody, err := os.Open("documents.jsonl")
-		// defer close, error handling ...
+		actualSize := len(datasets)
+		//no bulk insert instead use import. see https://github.com/typesense/typesense/issues/35
+		_, errx := client.Collection(indexName).Documents().Import(toArrInterface, &api.ImportDocumentsParams{BatchSize: &actualSize})
+		insertDuration = append(insertDuration, int(time.Since(start)))
+		if errx != nil {
+			log.Println(errx)
+		}
+		if err != nil {
+			break
+		}
+	}
+	fmt.Println(FtsName+` BulkInsert 100 `, time.Duration(average(insertDuration)))
+	fmt.Println(FtsName+` TotalInsert `, time.Duration(total(insertDuration)))
 
-		client.Collection("companies").Documents().ImportJsonl(importBody, params)
-	*/
-	//List all collections
-
-	client.Collections().Retrieve()
-
-	//Drop a collection
-
-	client.Collection("companies").Delete()
-
-	//Create an API Key
-
-	description := "Search-only key."
-	expiresAt := time.Now().AddDate(0, 6, 0).Unix()
-	keySchema := &api.ApiKeySchema{
-		Description: &description,
-		Actions:     []string{"documents:search"},
-		Collections: []string{"companies"},
-		ExpiresAt:   &expiresAt,
+	limit := 1000
+	searchParameters := &api.SearchCollectionParams{
+		Q:          "anime",
+		QueryBy:    "definition",
+		GroupLimit: &limit,
 	}
 
-	client.Keys().Create(keySchema)
-
-	//Retrieve an API Key
-
-	client.Key(1).Retrieve()
-
-	//List all keys
-
-	client.Keys().Retrieve()
-
-	//Delete API Key
-
-	client.Key(1).Delete()
-
-	//Create or update an override
-
-	override := &api.SearchOverrideSchema{
-		Rule: api.SearchOverrideRule{
-			Query: "apple",
-			Match: "exact",
-		},
-		Includes: &[]api.SearchOverrideInclude{
-			{
-				Id:       "422",
-				Position: 1,
-			},
-			{
-				Id:       "54",
-				Position: 2,
-			},
-		},
-		Excludes: &[]api.SearchOverrideExclude{
-			{
-				Id: "287",
-			},
-		},
+	res, err := client.Collection(indexName).Documents().Search(searchParameters)
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(*res.Found)
+	fmt.Println(FtsName+` search `, *res.SearchTimeMs, ` ms`)
+}
 
-	client.Collection("companies").Overrides().Upsert("customize-apple", override)
-
-	//List all overrides
-
-	client.Collection("companies").Overrides().Retrieve()
-
-	//Delete an override
-
-	client.Collection("companies").Override("customize-apple").Delete()
-
-	//Create or Update an alias
-
-	body := &api.CollectionAliasSchema{CollectionName: "companies_june11"}
-	client.Aliases().Upsert("companies", body)
-
-	//Retrieve an alias
-
-	client.Alias("companies").Retrieve()
-
-	//List all aliases
-
-	client.Aliases().Retrieve()
-
-	//Delete an alias
-
-	client.Alias("companies").Delete()
-
-	//Create or update a multi-way synonym
-
-	synonym := &api.SearchSynonymSchema{
-		Synonyms: []string{"blazer", "coat", "jacket"},
+func total(x []int) int {
+	i := 0
+	for _, v := range x {
+		i += v
 	}
-	client.Collection("products").Synonyms().Upsert("coat-synonyms", synonym)
+	return i
+}
 
-	//Create or update a one-way synonym
-
-	root := "blazer"
-	synonym = &api.SearchSynonymSchema{
-		Root:     &root,
-		Synonyms: []string{"blazer", "coat", "jacket"},
+func average(x []int) int {
+	i := 0
+	for _, v := range x {
+		i += v
 	}
-	client.Collection("products").Synonyms().Upsert("coat-synonyms", synonym)
-
-	//Retrieve a synonym
-
-	client.Collection("products").Synonym("coat-synonyms").Retrieve()
-
-	//List all synonyms
-
-	client.Collection("products").Synonyms().Retrieve()
-
-	//Delete a synonym
-
-	client.Collection("products").Synonym("coat-synonyms").Delete()
-
-	//Create snapshot (for backups)
-
-	client.Operations().Snapshot("/tmp/typesense-data-snapshot")
-
-	//Re-elect Leader
-
-	client.Operations().Vote()
+	return i / len(x)
 }

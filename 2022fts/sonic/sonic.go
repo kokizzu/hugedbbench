@@ -2,32 +2,30 @@ package main
 
 import (
 	"fmt"
+	"hugedbbench/2022fts/datasets"
 
 	"github.com/expectedsh/go-sonic/sonic"
 )
 
 func main() {
-
+	//not sure about this one
+	udict := datasets.LoadUrbanDictionaryDatasets()
 	ingester, err := sonic.NewIngester("localhost", 1491, "SecretPassword")
 	if err != nil {
 		panic(err)
 	}
 
-	// I will ignore all errors for demonstration purposes
-
-	_ = ingester.BulkPush("movies", "general", 3, []sonic.IngestBulkRecord{
-		{"id:6ab56b4kk3", "Star wars"},
-		{"id:5hg67f8dg5", "Spider man"},
-		{"id:1m2n3b4vf6", "Batman"},
-		{"id:68d96h5h9d0", "This is another movie"},
-	})
-
+	bulk := make([]sonic.IngestBulkRecord, len(udict))
+	for i, v := range udict {
+		bulk[i] = sonic.IngestBulkRecord{Object: v.WordId, Text: v.Definition}
+	}
+	_ = ingester.BulkPush("myIndex1", "general", 3, bulk, sonic.LangEng)
 	search, err := sonic.NewSearch("localhost", 1491, "SecretPassword")
 	if err != nil {
 		panic(err)
 	}
 
-	results, _ := search.Query("movies", "general", "man", 10, 0)
+	results, _ := search.Query("myIndex1", "general", "anime", 10, 0, sonic.LangEng)
 
 	fmt.Println(results)
 }

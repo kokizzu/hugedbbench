@@ -5,3 +5,5 @@ services:
     image: "redislabs/redisearch"
     ports:
       - "6379:6379"
+    volumes:
+      - ./redisearchdata:/data

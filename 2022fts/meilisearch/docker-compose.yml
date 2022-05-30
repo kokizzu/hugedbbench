@@ -8,3 +8,5 @@ services:
       - MEILI_NO_ANALYTICS=true
       - MEILI_NO_SENTRY=true
       - MEILI_MASTER_KEY=test_api_key
+    volumes:
+      - ./meilisearchdata:/home/meili/data.ms
