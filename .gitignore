@@ -28,3 +28,10 @@ jet2
 jet3
 ydb_certs
 ydb_data
+2022fts/datasets/*
+!2022fts/datasets/*.go
+.vscode
+elasticsearchdata/node*
+meilisearchdata/*
+redisearchdata/*
+typesensedata/*

@@ -5,5 +5,5 @@ services:
     entrypoint: sh -c "/opt/typesense-server --data-dir /data --api-key=local-typesense-api-key --enable-cors"
     ports:
       - "8108:8108"
-#    volumes:
-#      - typesense-data:/data
+    volumes:
+      - ./typesensedata:/data

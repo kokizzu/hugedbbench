@@ -2,33 +2,68 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"hugedbbench/2022fts/datasets"
+	"time"
 
 	"github.com/meilisearch/meilisearch-go"
 )
 
+const FtsName = `Meilisearch`
+
 func main() {
 	client := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   "http://127.0.0.1:7700",
-		APIKey: "test_api_key",
+		Host:    "http://127.0.0.1:7720",
+		APIKey:  "test_api_key",
+		Timeout: 600 * time.Second,
 	})
 	// An index is where the documents are stored.
-	index := client.Index("movies")
+	index := client.Index("urbandict")
+	index.DeleteAllDocuments()
+	reader := datasets.UrbanDictionaryReader{SkipHeader: true}
 
-	// If the index 'movies' does not exist, Meilisearch creates it when you first add the documents.
-	documents := []map[string]interface{}{
-		{"id": 1, "title": "Carol", "genres": []string{"Romance", "Drama"}},
-		{"id": 2, "title": "Wonder Woman", "genres": []string{"Action", "Adventure"}},
-		{"id": 3, "title": "Life of Pi", "genres": []string{"Adventure", "Drama"}},
-		{"id": 4, "title": "Mad Max: Fury Road", "genres": []string{"Adventure", "Science Fiction"}},
-		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
-		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
+	insertDuration := []int{}
+
+	for {
+		datasets, _, err := reader.ReadNextNLines(100)
+		start := time.Now()
+		//i hope this working as expected
+		t, _ := index.AddDocuments(datasets)
+		//around 3.5min each https://github.com/meilisearch/MeiliSearch/issues/1098
+		index.WaitForTask(&meilisearch.Task{UID: t.UID, Status: meilisearch.TaskStatusSucceeded})
+		insertDuration = append(insertDuration, int(time.Since(start)))
+		if err != nil {
+			break
+		}
 	}
-	task, err := index.AddDocuments(documents)
+	req := []string{`definition`}
+	index.UpdateSearchableAttributes(&req)
+	fmt.Println(FtsName+` BulkInsert 100 `, time.Duration(average(insertDuration)))
+	fmt.Println(FtsName+` TotalInsert `, time.Duration(total(insertDuration)))
+
+	// start := time.Now()
+	sr, err := index.Search(`anime`, &meilisearch.SearchRequest{Limit: 1000})
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic(err)
 	}
+	fmt.Println(`found`, len(sr.Hits))
 
-	fmt.Println(task)
+	//fmt.Println(FtsName+`search `,time.Since(start) )
+	//i think using ProcessingTimeMs directly is better than time
+	fmt.Println(FtsName+`search `, sr.ProcessingTimeMs, ` ms`)
+}
+
+func total(x []int) int {
+	i := 0
+	for _, v := range x {
+		i += v
+	}
+	return i
+}
+
+func average(x []int) int {
+	i := 0
+	for _, v := range x {
+		i += v
+	}
+	return i / len(x)
 }
