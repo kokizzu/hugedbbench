@@ -1,10 +1,8 @@
 version: '2.1'
 
-# this code no longer works for :latest or :nightly
-
 services:
   pd0:
-    image: pingcap/pd:v5.4.0
+    image: pingcap/pd:nightly
     ports:
       - "2379"
     volumes:
@@ -24,7 +22,7 @@ services:
     restart: on-failure
     
   tikv0:
-    image: pingcap/tikv:v5.4.0
+    image: pingcap/tikv:nightly
     volumes:
       - ./tikv.toml:/tikv.toml:ro
       - ./tikv0:/data
@@ -41,7 +39,7 @@ services:
     restart: on-failure
     
   tidb:
-    image: pingcap/tidb:v5.4.0
+    image: pingcap/tidb:nightly
     ports:
       - "4000:4000"
       - "10081:10080"
