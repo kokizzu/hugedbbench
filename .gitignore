@@ -31,7 +31,7 @@ ydb_data
 2022fts/datasets/*
 !2022fts/datasets/*.go
 .vscode
-elasticsearchdata/node*
+2022fts/elasticsearch/elasticsearchdata/nodes/
 meilisearchdata/*
 redisearchdata/*
 typesensedata/*
