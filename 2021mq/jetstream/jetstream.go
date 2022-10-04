@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kokizzu/gotro/L"
-	"github.com/kokizzu/gotro/M"
 	//"github.com/nats-io/nats.go" // comment until security fixes out
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/kokizzu/gotro/L"
+	"github.com/kokizzu/gotro/M"
+	"github.com/nats-io/nats.go"
 )
 
 const PRODUCERS = 100       //* 0.5 // some publishers timed out --> lowered because timed out
@@ -18,6 +20,8 @@ const CONSUMERS = 100 * 0.5 // dunno why, 56th-86th consumer always timeout
 const TOPIC = `foo`
 const PROGRESS = 10000
 const WILDCARD = `.*`
+
+// TODO: retest with updated docker image, this one is broken cannot QueueSubscribe
 
 // docker-compose -f docker-compose-single.yaml up --remove-orphans
 // docker-compose -f docker-compose-multi.yaml up --remove-orphans
@@ -74,7 +78,7 @@ func main() {
 				L.PanicIf(err, `nc.JetStream`)
 				//defer nc.Close() // don't close or it will not consume
 				//fmt.Println(`Consumer spawned`, z)
-				_, err = js.Subscribe(TOPIC, func(msg *nats.Msg) {
+				_, err = js.QueueSubscribe(TOPIC, `queue1`, func(msg *nats.Msg) {
 					//atomic.AddInt64(&failConsume, int64(len(errs)))
 					//L.Print(errs)
 					m := M.SX{}
