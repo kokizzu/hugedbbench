@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	//"github.com/nats-io/nats.go" // comment until security fixes out
 	"log"
 	"sync"
 	"sync/atomic"
@@ -14,12 +13,11 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-const PRODUCERS = 100       //* 0.5 // some publishers timed out --> lowered because timed out
-const MSGS = 20000          // x PRODUCERS --> increased x10
-const CONSUMERS = 100 * 0.5 // dunno why, 56th-86th consumer always timeout
+const PRODUCERS = 1000
+const MSGS = 2000 // x PRODUCERS
+const CONSUMERS = 100
 const TOPIC = `foo`
 const PROGRESS = 10000
-const WILDCARD = `.*`
 
 // TODO: retest with updated docker image, this one is broken cannot QueueSubscribe
 
@@ -44,7 +42,7 @@ func main() {
 	startBenchmark := time.Now()
 	nc, err := nats.Connect(nats.DefaultURL)
 	L.PanicIf(err, `nats.Connect`)
-	js, err := nc.JetStream()
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	L.PanicIf(err, `nc.JetStream`)
 	defer nc.Close()
 
@@ -78,7 +76,7 @@ func main() {
 				L.PanicIf(err, `nc.JetStream`)
 				//defer nc.Close() // don't close or it will not consume
 				//fmt.Println(`Consumer spawned`, z)
-				_, err = js.QueueSubscribe(TOPIC, `queue1`, func(msg *nats.Msg) {
+				_, err = js.QueueSubscribe(TOPIC, ``, func(msg *nats.Msg) {
 					//atomic.AddInt64(&failConsume, int64(len(errs)))
 					//L.Print(errs)
 					m := M.SX{}
@@ -127,6 +125,11 @@ func main() {
 			L.PanicIf(err, `nats.Connect`)
 			js, err := nc.JetStream()
 			L.PanicIf(err, `nc.JetStream`)
+			_, _ = js.AddStream(&nats.StreamConfig{
+				Name:     TOPIC,
+				Subjects: []string{TOPIC},
+				Replicas: 1,
+			})
 			defer nc.Close()
 			//fmt.Println(`Producer spawned`, z)
 			for y := 0; y < MSGS; y++ {

@@ -16,14 +16,14 @@ require (
 	github.com/kokizzu/id64 v1.1726.1650
 	github.com/manticoresoftware/go-sdk v0.0.0-20200819180014-70a49dc3179d
 	github.com/meilisearch/meilisearch-go v0.19.1
-	github.com/nats-io/nats.go v1.13.1-0.20220308171302-2f2f6968e98d
+	github.com/nats-io/nats.go v1.21.0
 	github.com/olivere/elastic/v7 v7.0.32
 	github.com/stretchr/testify v1.7.1
 	github.com/tarantool/go-tarantool v0.0.0-20220520093723-d44ffa0cda16
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
 	github.com/ydb-platform/ydb-go-sdk/v3 v3.21.0
-	golang.org/x/net v0.0.0-20220524220425-1d687d428aca
+	golang.org/x/net v0.3.0
 )
 
 require (
@@ -67,7 +67,7 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.7.4 // indirect
@@ -90,9 +90,9 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/ydb-platform/ydb-go-genproto v0.0.0-20220203104745-929cf9c248bc // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/crypto v0.4.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220420195807-44278fea765b // indirect
