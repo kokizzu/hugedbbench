@@ -1,6 +1,19 @@
 
 # Benchmarking CockroachDB on different type of disk
 
+| Disk Type       | InsDur | UpdDur | SelDur | ManyDur | InsQps | UpdQps | SelQps | ManyRow/s | ManyQps |
+|-----------------|--------|--------|--------|---------|--------|--------|--------|-----------|---------|
+| TMPFS (RAM)     |    1.3 |    2.1 |    4.9 |     1.5 |  31419 |  19275 |   8127 |   8194872 |   20487 |
+| NVME DA 1TB     |    2.7 |    3.7 |    5.0 |     1.5 |  15072 |  10698 |   8055 |   8019435 |   20048 |
+| NVMe Team 1TB   |    3.8 |    3.7 |    4.9 |     1.5 |  10569 |  10678 |   8182 |   8209889 |   20524 |
+| SSD GALAX 250GB |    8.0 |    7.1 |    5.0 |     1.5 |   4980 |   5655 |   7987 |   7926162 |   19815 |
+| HDD WD 8TB      |   32.1 |   31.7 |    4.9 |     3.9 |   1244 |   1262 |   8156 |   3075780 |    7689 |
+
+- Dur in seconds
+- Qps = queries per seconds, for Insert and Update equal to records per second since the insert/update done per 1 row
+- Row/s number of rows scanned per second
+
+
 ## 0. TMPFS (RAM)
 
 ```
