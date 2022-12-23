@@ -74,3 +74,4 @@ CockroachDB Select400: 3.9 sec | 3075780.1 rec/s | 7689.5 queries/s
 ```
 
 CockroachDB version: v22.1.8 @ 2022/09/29 14:21:51 (go1.17.11).
+Disk Usage by Database: 1.6G
