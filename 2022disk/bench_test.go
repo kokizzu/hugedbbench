@@ -110,8 +110,8 @@ func TestDb(t *testing.T) {
 			wg.Add(1)
 			go func(z int) {
 				var str string
-				for y := 0; y < RecordsPerGoroutine; y++ {
-					for x := 0; x < SelectRepeat; x++ {
+				for x := 0; x < SelectRepeat; x++ {
+					for y := 0; y < RecordsPerGoroutine; y++ {
 						row := conn.QueryRow(bg, `SELECT foo FROM bar1 WHERE id=$1`, z*RecordsPerGoroutine+y)
 						err := row.Scan(&str)
 						L.PanicIf(err, `failed select bar1`)
@@ -124,7 +124,7 @@ func TestDb(t *testing.T) {
 	})
 
 	dur = time.Since(start).Seconds()
-	fmt.Printf(DbName+` SelectOne: %.1f sec | %.1f rec/s`+"\n", dur, (GoRoutineCount*RecordsPerGoroutine)/dur)
+	fmt.Printf(DbName+` SelectOne: %.1f sec | %.1f rec/s`+"\n", dur, (SelectRepeat*GoRoutineCount*RecordsPerGoroutine)/dur)
 	start = time.Now()
 
 	totalScan := int64(0)
