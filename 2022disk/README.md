@@ -27,7 +27,7 @@ CockroachDB SelectOne: 5.0 sec | 8055.8 rec/s
 CockroachDB Select400: 1.5 sec | 8019435.9 rec/s | 20048.6 queries/s
 ```
 
-# 2. NVMe Team 512 GB
+## 2. NVMe Team 512 GB
 
 ```
 CockroachDB InsertOne: 3.8 sec | 10569.6 rec/s
@@ -38,7 +38,7 @@ CockroachDB SelectOne: 4.9 sec | 8182.0 rec/s
 CockroachDB Select400: 1.5 sec | 8209889.1 rec/s | 20524.7 queries/s
 ```
 
-# 3. SSD Galax 250 GB
+## 3. SSD Galax 250 GB
 
 ```
 CockroachDB InsertOne: 8.0 sec | 4980.8 rec/s
@@ -49,7 +49,7 @@ CockroachDB SelectOne: 5.0 sec | 7987.7 rec/s
 CockroachDB Select400: 1.5 sec | 7926162.5 rec/s | 19815.4 queries/s
 ```
 
-# 4. HDD WD 8 TB
+## 4. HDD WD 8 TB
 
 ```
 CockroachDB InsertOne: 32.1 sec | 1244.2 rec/s
