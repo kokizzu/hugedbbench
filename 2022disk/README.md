@@ -2,12 +2,12 @@
 # Benchmarking CockroachDB on different type of disk
 
 | Disk Type       | InsDur | UpdDur | SelDur | ManyDur | InsQps | UpdQps | SelQps | ManyRow/s | ManyQps |
-|-----------------|--------|--------|--------|---------|--------|--------|--------|-----------|---------|
-| TMPFS (RAM)     |    1.3 |    2.1 |    4.9 |     1.5 |  31419 |  19275 | 81274  |   8194872 |   20487 |
-| NVME DA 1TB     |    2.7 |    3.7 |    5.0 |     1.5 |  15072 |  10698 | 80558  |   8019435 |   20048 |
-| NVMe Team 1TB   |    3.8 |    3.7 |    4.9 |     1.5 |  10569 |  10678 | 81820  |   8209889 |   20524 |
-| SSD GALAX 250GB |    8.0 |    7.1 |    5.0 |     1.5 |   4980 |   5655 | 79877  |   7926162 |   19815 |
-| HDD WD 8TB      |   32.1 |   31.7 |    4.9 |     3.9 |   1244 |   1262 | 81561  |   3075780 |    7689 |
+|-----------------|-------:|-------:|-------:|--------:|-------:|-------:|-------:|----------:|--------:|
+| TMPFS (RAM)     |    1.3 |    2.1 |    4.9 |     1.5 |  31419 |  19275 |  81274 |   8194872 |   20487 |
+| NVME DA 1TB     |    2.7 |    3.7 |    5.0 |     1.5 |  15072 |  10698 |  80558 |   8019435 |   20048 |
+| NVMe Team 1TB   |    3.8 |    3.7 |    4.9 |     1.5 |  10569 |  10678 |  81820 |   8209889 |   20524 |
+| SSD GALAX 250GB |    8.0 |    7.1 |    5.0 |     1.5 |   4980 |   5655 |  79877 |   7926162 |   19815 |
+| HDD WD 8TB      |   32.1 |   31.7 |    4.9 |     3.9 |   1244 |   1262 |  81561 |   3075780 |    7689 |
 
 - Dur in seconds
 - Qps = queries per seconds, for Insert and Update equal to records per second since the insert/update done per 1 row
@@ -74,4 +74,5 @@ CockroachDB Select400: 3.9 sec | 3075780.1 rec/s | 7689.5 queries/s
 ```
 
 CockroachDB version: v22.1.8 @ 2022/09/29 14:21:51 (go1.17.11).
+
 Disk Usage by Database: 1.6G
