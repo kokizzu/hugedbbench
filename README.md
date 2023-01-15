@@ -6,4 +6,5 @@ huge list of database benchmark
 - [2021-11](https://kokizzu.blogspot.com/2021/11/kafka-vs-redpanda-benchmark.html) - Kafka vs RedPanda vs Tarantool vs Clickhouse (as queue)
 - [2022-04](http://kokizzu.blogspot.com/2022/04/automatic-load-balancer.html) - NATS vs FabioLB (not database)
 - [2022-12](https://kokizzu.blogspot.com/2022/12/cockroachdb-benchmark-on-different-disk.html) - CockroachDB on RAM/NVMe/SSD/HDD
+- [2023-01](https://github.com/kokizzu/gorm-vs-korm) - PostgreSQL vs TArantool using various ORM
 - TODO: FTS benchmark, use this dataset: https://github.com/alexa/massive
