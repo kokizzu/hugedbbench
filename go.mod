@@ -23,7 +23,7 @@ require (
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
 	github.com/ydb-platform/ydb-go-sdk/v3 v3.21.0
-	golang.org/x/net v0.3.0
+	golang.org/x/net v0.7.0
 )
 
 require (
@@ -91,8 +91,8 @@ require (
 	github.com/ydb-platform/ydb-go-genproto v0.0.0-20220203104745-929cf9c248bc // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220420195807-44278fea765b // indirect
