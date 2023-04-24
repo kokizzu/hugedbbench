@@ -40,9 +40,11 @@ func main() {
 		b := cli.B().Geosearch().Key(key).
 			Fromlonlat(long, lat).
 			Bybox(boxMeter).Height(boxMeter).M().
+			Asc().
 			Count(maxResult).
 			Withcoord().
-			Withdist().Build()
+			Withdist().
+			Build()
 		resp := cli.Do(ctx, b)
 		err := resp.Error()
 		if L.IsError(err, `GEOSEARCH`) {

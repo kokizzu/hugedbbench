@@ -83,6 +83,7 @@ SELECT id, lat, long, distance($1,$2,lat,long) AS dist
 FROM points_sg 
 WHERE lat BETWEEN $1-$3 AND $2+$3 
   AND long BETWEEN $1-$3 AND $2+$3 
+ORDER BY 4
 LIMIT $4
 `,
 			lat, long,
