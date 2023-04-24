@@ -32,13 +32,16 @@ func main() {
 		, lat FLOAT8 NOT NULL
 		, long FLOAT8 NOT NULL
 	)`
-
 	_, err = db.Exec(ctx, createTable)
-	L.PanicIf(err, `db.Exec `+createTable)
+	L.PanicIf(err, `db.Exec createTable`)
 
 	const trunceTable = `TRUNCATE TABLE points_sg`
 	_, err = db.Exec(ctx, trunceTable)
-	L.PanicIf(err, `db.Exec `+trunceTable)
+	L.PanicIf(err, `db.Exec trunceTable`)
+
+	const createIndex = `CREATE INDEX IF NOT EXISTS points_sg_lat_long_idx ON points_sg(lat, long)`
+	_, err = db.Exec(ctx, createIndex)
+	L.PanicIf(err, `db.Exec createIndex`)
 
 	const createFunc = `CREATE OR REPLACE FUNCTION distance(
     lat1 double precision,
@@ -65,7 +68,7 @@ $____$
   LANGUAGE plpgsql VOLATILE
   COST 100;`
 	_, err = db.Exec(ctx, createFunc)
-	L.PanicIf(err, `db.Exec `+createFunc)
+	L.PanicIf(err, `db.Exec createFunc`)
 
 	geo.Insert100kPoints(func(lat float64, long float64, id uint64) error {
 		_, err = db.Exec(ctx, `INSERT INTO points_sg (id, lat, long) VALUES ($1, $2, $3)`, id, lat, long)
