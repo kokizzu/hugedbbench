@@ -1,28 +1,33 @@
 module hugedbbench
 
-go 1.17
+go 1.20
 
 require (
 	github.com/ClickHouse/clickhouse-go v1.5.4
 	github.com/RediSearch/redisearch-go v1.1.1
+	github.com/alitto/pond v1.8.3
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
 	github.com/fabiolb/fabio v1.5.15
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gofiber/fiber/v2 v2.34.0
 	github.com/hashicorp/consul/api v1.7.0
 	github.com/jackc/pgx/v4 v4.16.1
+	github.com/jackc/pgx/v5 v5.3.1
 	github.com/kokizzu/ch-timed-buffer v1.825.1523-0.20210826171319-738868384f38
 	github.com/kokizzu/gotro v1.1726.1724
 	github.com/kokizzu/id64 v1.1726.1650
+	github.com/kpango/fastime v1.1.4
 	github.com/manticoresoftware/go-sdk v0.0.0-20200819180014-70a49dc3179d
 	github.com/meilisearch/meilisearch-go v0.19.1
 	github.com/nats-io/nats.go v1.21.0
 	github.com/olivere/elastic/v7 v7.0.32
-	github.com/stretchr/testify v1.7.1
+	github.com/rueian/rueidis v0.0.51
+	github.com/stretchr/testify v1.8.1
 	github.com/tarantool/go-tarantool v0.0.0-20220520093723-d44ffa0cda16
 	github.com/twmb/franz-go v1.3.2
 	github.com/typesense/typesense-go v0.4.0
 	github.com/ydb-platform/ydb-go-sdk/v3 v3.21.0
+	go.uber.org/atomic v1.6.0
 	golang.org/x/net v0.7.0
 )
 
@@ -56,12 +61,12 @@ require (
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.0 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.11.0 // indirect
 	github.com/jackc/puddle v1.2.1 // indirect
+	github.com/jackc/puddle/v2 v2.2.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.15.4 // indirect
-	github.com/kpango/fastime v1.1.4 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
@@ -90,7 +95,8 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/ydb-platform/ydb-go-genproto v0.0.0-20220203104745-929cf9c248bc // indirect
 	github.com/yosuke-furukawa/json5 v0.1.1 // indirect
-	golang.org/x/crypto v0.4.0 // indirect
+	golang.org/x/crypto v0.6.0 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
@@ -99,5 +105,5 @@ require (
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.2 // indirect
-	gopkg.in/yaml.v3 v3.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
