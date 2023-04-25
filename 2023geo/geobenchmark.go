@@ -47,7 +47,7 @@ func Insert100kPoints(insertFunc func(lat float64, long float64, id uint64) erro
 	rps := float64(okCount) / duration
 	percent := float64(okCount) * 100 / float64(okCount)
 	fmt.Printf("INSERTED 100K points: ok %d (%.1f%%) in %.1f sec, %.1f rps, ERR: %d\n",
-		okCount, percent, duration, rps, errCounter)
+		okCount, percent, duration, rps, errCounter.Load())
 }
 
 // SearchRadius200k 200K times searching for points
@@ -85,7 +85,7 @@ func SearchRadius200k(searchFunc func(lat float64, long float64, boxMeter float6
 	found := totalFound.Load()
 	ptsPerReq := float64(found) / float64(okCount)
 	fmt.Printf("SEARCHED_RADIUS 200K points: ok %d (%.1f%%) in %.1f sec, %.1f rps, points %d, %.1f points/req ERR: %d\n",
-		okCount, percent, duration, rps, found, ptsPerReq, errCounter)
+		okCount, percent, duration, rps, found, ptsPerReq, errCounter.Load())
 }
 
 // MovingPoint moving first 100 point to another location, each 50 times
@@ -115,5 +115,5 @@ func MovingPoint(movingFunc func(lat float64, long float64, id uint64) error) {
 	rps := float64(okCount) / duration
 	percent := float64(okCount) * 100 / float64(okCount)
 	fmt.Printf("MOVING 5K points: ok %d (%.1f%%) in %.1f sec, %.1f rps, ERR: %d\n",
-		okCount, percent, duration, rps, errCounter)
+		okCount, percent, duration, rps, errCounter.Load())
 }
