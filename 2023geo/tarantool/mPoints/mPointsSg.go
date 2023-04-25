@@ -32,9 +32,8 @@ func (u *PointsSg) FromArray(a A.X) *PointsSg { //nolint:dupl false positive
 
 func (u *PointsSg) ToMapFromSlice(row []any) map[string]any {
 	return map[string]any{
-		IdCol:  row[0],
-		`lat`:  row[1],
-		`long`: row[2],
+		IdCol:   row[0],
+		`coord`: row[1],
 	}
 }
 
@@ -49,7 +48,8 @@ var Tables = map[TableName]*TableProp{
 			{`coord`, Array},
 		},
 		AutoIncrementId: true,
-		Engine:          Vinyl,
+		Engine:          Memtx,
+		Spatial:         `coord`, // spatial index only works for memtx
 	},
 	// TODO: add support for rtree
 	// https://www.tarantool.io/en/doc/latest/concepts/data_model/indexes/

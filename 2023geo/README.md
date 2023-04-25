@@ -10,7 +10,7 @@ MOVING 5K points: ok 5000 (100.0%) in 0.1 sec, 77609.4 rps, ERR: {0}
 
 RAM: 21 MB
 
--- REDIS (nearestt first)
+-- REDIS (nearest first)
 
 INSERTED 100K points: ok 100000 (100.0%) in 0.6 sec, 168513.6 rps, ERR: {0}
 SEARCHED_RADIUS 200K points: ok 30676 (15.3%) in 50.0 sec, 613.5 rps, points 15338000, 500.0 points/req ERR: {0}
@@ -36,5 +36,10 @@ INSERTED 100K points: ok 100000 (100.0%) in 10.5 sec, 9523.7 rps, ERR: {0}
 SEARCHED_RADIUS 200K points: ok 7778 (3.9%) in 50.0 sec, 155.6 rps, points 3889000, 500.0 points/req ERR: {0}
 MOVING 5K points: ok 5000 (100.0%) in 0.6 sec, 7954.3 rps, ERR: {0}
 
+-- TARANTOOL
+
+INSERTED 100K points: ok 100000 (100.0%) in 0.8 sec, 129114.1 rps, ERR: {[] 0}
+SEARCHED_RADIUS 200K points: ok 200000 (100.0%) in 29.8 sec, 6718.0 rps, points 100000000, 500.0 points/req ERR: {[] 0}
+MOVING 5K points: ok 5000 (100.0%) in 0.0 sec, 150719.2 rps, ERR: {[] 0}
 
 ```
