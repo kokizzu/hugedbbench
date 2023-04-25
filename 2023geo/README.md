@@ -42,4 +42,22 @@ INSERTED 100K points: ok 100000 (100.0%) in 0.8 sec, 129114.1 rps, ERR: {[] 0}
 SEARCHED_RADIUS 200K points: ok 200000 (100.0%) in 29.8 sec, 6718.0 rps, points 100000000, 500.0 points/req ERR: {[] 0}
 MOVING 5K points: ok 5000 (100.0%) in 0.0 sec, 150719.2 rps, ERR: {[] 0}
 
+-- TARATOOL (distance calculated on backend)
+
+INSERTED 100K points: ok 100000 (100.0%) in 0.8 sec, 126801.9 rps, ERR: {[] 0}
+SEARCHED_RADIUS 200K points: ok 200000 (100.0%) in 35.0 sec, 5716.3 rps, points 100000000, 500.0 points/req ERR: {[] 0}
+MOVING 5K points: ok 5000 (100.0%) in 0.0 sec, 137424.8 rps, ERR: {[] 0}
+
+-- TYPESENSE (default 10 limit)
+
+INSERTED 100K points: ok 98960 (100.0%) in 94.7 sec, 1044.5 rps, ERR: {[] 0}
+SEARCHED_RADIUS 200K points: ok 34150 (17.1%) in 50.0 sec, 683.0 rps, points 341500, 10.0 points/req ERR: {[] 0}
+MOVING 5K points: ok 5000 (100.0%) in 9.6 sec, 523.5 rps, ERR: {[] 0}
+
+-- TYPESENSE (250 limit, cannot be 500)
+
+INSERTED 100K points: ok 98960 (100.0%) in 96.7 sec, 1023.8 rps, ERR: {[] 0}
+SEARCHED_RADIUS 200K points: ok 2177 (1.1%) in 50.0 sec, 43.5 rps, points 544250, 250.0 points/req ERR: {[] 0}
+MOVING 5K points: ok 5000 (100.0%) in 9.7 sec, 515.2 rps, ERR: {[] 0}
+
 ```

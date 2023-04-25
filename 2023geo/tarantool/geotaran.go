@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"math"
 
 	"github.com/kokizzu/gotro/D/Tt"
 	"github.com/kokizzu/gotro/L"
@@ -40,7 +41,17 @@ func main() {
 		p.Coord = []any{lat, long}
 		res := p.FindNearestPoints(boxMeter, maxResult)
 		l := len(res)
-
+		// decorate with distance
+		deco := make([]any, 0, len(res))
+		for _, r := range res {
+			lat2 := r.Coord[0].(float64)
+			long2 := r.Coord[1].(float64)
+			w := lat - lat2
+			h := long - long2
+			d := math.Sqrt(w*w+h*h) * geo.DegToMeter
+			deco = append(deco, []any{r.Id, lat2, long2, d})
+		}
+		_ = deco
 		return uint64(l), nil
 	})
 
