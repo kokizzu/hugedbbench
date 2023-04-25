@@ -18,7 +18,7 @@ require (
 	github.com/kokizzu/id64 v1.2423.1343
 	github.com/kpango/fastime v1.1.9
 	github.com/manticoresoftware/go-sdk v0.0.0-20200819180014-70a49dc3179d
-	github.com/meilisearch/meilisearch-go v0.19.1
+	github.com/meilisearch/meilisearch-go v0.24.0
 	github.com/nats-io/nats.go v1.21.0
 	github.com/olivere/elastic/v7 v7.0.32
 	github.com/rueian/rueidis v0.0.100
@@ -60,6 +60,7 @@ require (
 	github.com/goccy/go-yaml v1.11.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gomodule/redigo v1.8.3 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect

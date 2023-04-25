@@ -51,7 +51,4 @@ var Tables = map[TableName]*TableProp{
 		Engine:          Memtx,
 		Spatial:         `coord`, // spatial index only works for memtx
 	},
-	// TODO: add support for rtree
-	// https://www.tarantool.io/en/doc/latest/concepts/data_model/indexes/
-	// to be fair, not making an index on "content"
 }

@@ -60,4 +60,11 @@ INSERTED 100K points: ok 98960 (100.0%) in 96.7 sec, 1023.8 rps, ERR: {[] 0}
 SEARCHED_RADIUS 200K points: ok 2177 (1.1%) in 50.0 sec, 43.5 rps, points 544250, 250.0 points/req ERR: {[] 0}
 MOVING 5K points: ok 5000 (100.0%) in 9.7 sec, 515.2 rps, ERR: {[] 0}
 
+-- MEILISEARCH (always zero result)
+
+INSERTED 100K points: ok 98960 (100.0%) in 365.0 sec, 271.2 rps, ERR: {[] 0}
+SEARCHED_RADIUS 200K points: ok 200000 (100.0%) in 4.8 sec, 41675.9 rps, points 0, 0.0 points/req ERR: {[] 0}
+MOVING 5K points: ok 5000 (100.0%) in 8.8 sec, 569.7 rps, ERR: {[] 0}
+
+
 ```
