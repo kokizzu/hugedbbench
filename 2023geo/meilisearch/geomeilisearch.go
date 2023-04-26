@@ -36,12 +36,15 @@ func main() {
 	//L.Print(`StartBenchmark`)
 	//
 	//// not optimal for non-batch request, just like clickhouse
+	//called := atomic.Uint32{}
 	//geo.Insert100kPoints(func(lat, long float64, id uint64) error {
+	//	called.Add(1)
 	//	task, err := index.AddDocuments([]map[string]interface{}{
 	//		{"id": id, "_geo": []any{lat, long}},
 	//	})
 	//	L.IsError(err, `index.AddDocuments`)
-	//	if err == nil {
+	//	// wait only last one to make it a bit faster for Meilisearch
+	//	if err == nil && called.Load() == 100_000 {
 	//		_, err := client.WaitForTask(task.TaskUID)
 	//		L.IsError(err, `client.WaitForTask AddDocuments`)
 	//		return err
@@ -50,17 +53,26 @@ func main() {
 	//})
 
 	geo.SearchRadius200k(func(lat, long, boxMeter float64, maxResult int64) (uint64, error) {
-		// _geoBoundingBox: [minLat, minLong, maxLat, maxLong] --> didn't work
+		// _geoBoundingBox: --> didn't work
+		delta := boxMeter / geo.DegToMeter / 2
+		lat1 := lat - delta
+		lat2 := lat + delta
+		long1 := long - delta
+		long2 := long + delta
+		//fmt.Sprintf("_geoRadius(%f, %f, %.0f)", lat, long, boxMeter),
 		res, err := index.Search("", &meilisearch.SearchRequest{
-			Filter: fmt.Sprintf("_geoRadius(%f, %f, %.0f)", lat, long, boxMeter),
+			Filter: fmt.Sprintf("_geoBoundingBox([%f, %f], [%f, %f])", lat2, long2, lat1, long1),
 			Sort:   []string{fmt.Sprintf(`_geoPoint(%f, %f):asc`, lat, long)},
 			Limit:  maxResult,
 		})
 		if L.IsError(err, `index.Search`) {
 			return 0, err
 		}
-		// TODO: need to calculate distance manually (~10% overhead)
-		return uint64(len(res.Hits)), nil
+		rows := make([]any, 0, len(res.Hits))
+		for _, row := range res.Hits {
+			rows = append(rows, []any{row}) // TODO: get id, lat, long, _geoDistance (remove unecessary fields)
+		}
+		return uint64(len(rows)), nil
 	})
 
 	geo.MovingPoint(func(lat, long float64, id uint64) error {
