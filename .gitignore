@@ -35,3 +35,5 @@ ydb_data
 meilisearchdata/*
 redisearchdata/*
 typesensedata/*
+2022fts/manticoresearch/manticoresearchdata/
+2022fts/redisearch/redisearchdata/
