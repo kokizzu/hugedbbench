@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/kokizzu/gotro/I"
@@ -38,7 +38,7 @@ func TestDb(t *testing.T) {
 		`defaultdb`,
 	)
 
-	conn, err := pgxpool.Connect(bg, pgUrl)
+	conn, err := pgxpool.New(bg, pgUrl)
 	L.PanicIf(err, `cannot connect db`)
 	defer conn.Close()
 
