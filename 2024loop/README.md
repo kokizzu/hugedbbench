@@ -53,7 +53,7 @@ BenchmarkGetWhereInStruct_Taran_SQL-32   71587   17438 ns/op     3311 B/op    79
 BenchmarkGetWhereInArray_Taran_SQL-32    74480   16876 ns/op     3255 B/op    79 allocs/op
 BenchmarkGetLoopStruct_Taran_ORM-32      69703   17131 ns/op     4472 B/op   100 allocs/op
 
-
+# Postgres
 benchmarkInsertPgx-32                   100000   49230 ns/op     4.92 s
 BenchmarkInsert_Postgres_Pgx-32         100000   49231 ns/op      244 B/op     8 allocs/op
 benchmarkUpdatePgx-32                   200000   48958 ns/op     9.79 s
@@ -67,4 +67,5 @@ BenchmarkGetLoop_Postgres_Pgx-32         32282   37986 ns/op     4634 B/op   109
 
 ## Conclusion
 
-Tarantool fastest for insert, update, get single row use-case, postgres with pgx fastest for get multi-row use-case.
+Tarantool fastest for update, get single row use-case, postgres with pgx fastest for get multi-row use-case.
+`WHERE IN` always faster than loop `WHERE =`.
