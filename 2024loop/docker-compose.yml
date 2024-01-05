@@ -1,0 +1,41 @@
+version: '3.2'
+
+services:
+  tarantool1:
+    image: tarantool/tarantool:latest # 2.10.4 
+    environment:
+      TT_READAHEAD: '1632000' # 10x   
+      TT_VINYL_MEMORY: '2684354560' # 20x
+      TT_VINYL_CACHE: '2684354560' # 20x
+      TT_NET_MSG_MAX: '76800' # 100x
+      TT_MEMTX_MEMORY: '268435456' # 1x
+      TT_VINYL_PAGE_SIZE: '8192' # 1x
+    ports:
+      - "3301:3301"
+#    volumes:
+#      - ./tarantool1:/usr/local/share/tarantool
+  postgres1:
+    hostname: postgres1
+    container_name: postgres1
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment: 
+      POSTGRES_USER: "pgroot"
+      POSTGRES_PASSWORD: "password"
+    # TODO: find a way to tune with env
+      
+  cockroach1:
+    image: cockroachdb/cockroach:latest
+    command: start-single-node --insecure --accept-sql-without-tls # --listen-addr=127.0.0.1
+    ports:
+       - "26257:26257"
+       - "8080:8080"
+    environment:
+      COCKROACH_USER: "cockroach"
+      COCKROACH_DATABASE: "test1"
+#volumes:
+#  tarantool1:
+#    driver_opts:
+#      type: tmpfs
+#      device: tmpfs
