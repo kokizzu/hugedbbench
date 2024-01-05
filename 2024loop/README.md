@@ -35,9 +35,9 @@ BenchmarkGetAllMap_Taran_SQL-32           1520  843275 ns/op  1248582 B/op  6732
 BenchmarkGetOneStruct_Taran_SQL-32      105055   11961 ns/op     2569 B/op    57 allocs/op
 BenchmarkGetOneMap_Taran_SQL-32         113568   10576 ns/op     2561 B/op    57 allocs/op
 BenchmarkGetOneStruct_Taran_ORM-32      237246    5079 ns/op     1146 B/op    26 allocs/op
-BenchmarkGetWhereInStruct_Taran_ORM-32   43108   23268 ns/op     3310 B/op    79 allocs/op
-BenchmarkGetWhereInArray_Taran_ORM-32    50367   24336 ns/op     3254 B/op    79 allocs/op
-BenchmarkGetLoopStruct_Taran_SQL-32      62161   18716 ns/op     4464 B/op   100 allocs/op
+BenchmarkGetWhereInStruct_Taran_SQL-32   43108   23268 ns/op     3310 B/op    79 allocs/op
+BenchmarkGetWhereInArray_Taran_SQL-32    50367   24336 ns/op     3254 B/op    79 allocs/op
+BenchmarkGetLoopStruct_Taran_ORM-32      62161   18716 ns/op     4464 B/op   100 allocs/op
 
 # MemTX Engine
 BenchmarkInsertS_Taran_ORM-32           100000   48294 ns/op     4.83 s
