@@ -3,7 +3,7 @@
 
 ## Test Env
 
-- cockroachdb 23.1.13 (failed)
+- cockroachdb 23.1.13
 - postgresql 16.1-1.pgdg120+1
 - tarantool 2.11.2
 
@@ -17,7 +17,8 @@ goarch: amd64
 ```shell
 ./clean-start.sh
 go test -bench=Taran -benchmem .
-go test -bench=Pgx -benchmem .
+go test -bench=Cockroach -benchmem .
+go test -bench=Postgre -benchmem .
 ```
 
 ## Test Result
@@ -62,10 +63,23 @@ BenchmarkGetAllStruct_Postgres_Pgx-32    23229   51164 ns/op    58490 B/op  2994
 BenchmarkGetOneStruct_Postgres_Pgx-32   143138    8386 ns/op      578 B/op    13 allocs/op
 BenchmarkGetWhereIn_Postgres_Pgx-32     146140    8432 ns/op      673 B/op    18 allocs/op
 BenchmarkGetLoop_Postgres_Pgx-32         32282   37986 ns/op     4634 B/op   109 allocs/op
+
+# Cockroach
+benchmarkInsertPgx-32                   100000   97786 ns/op     9.78 s
+BenchmarkInsert_Cockroach_Pgx-32        100000   97787 ns/op      242 B/op     8 allocs/op
+benchmarkUpdatePgx-32                   200000  251920 ns/op     50.38 s
+BenchmarkUpdate_Cockroach_Pgx-32        200000  251921 ns/op      202 B/op     7 allocs/op
+BenchmarkGetAllStruct_Cockroach_Pgx-32   15722   79935 ns/op    58397 B/op  2947 allocs/op
+BenchmarkGetOneStruct_Cockroach_Pgx-32   55669   20172 ns/op      579 B/op    13 allocs/op
+BenchmarkGetWhereIn_Cockroach_Pgx-32     48294   25801 ns/op      674 B/op    18 allocs/op
+BenchmarkGetLoop_Cockroach_Pgx-32        19368   59906 ns/op     5561 B/op   117 allocs/op
+
 ```
 
 
 ## Conclusion
 
-Tarantool fastest for update, get single row use-case, postgres with pgx fastest for get multi-row use-case.
+Tarantool fastest for update, get single row use-case.
+Postgres with pgx fastest for get multi-row use-case.
+Cockroach with pgx slowest for update use-case.
 `WHERE IN` always faster than loop `WHERE =`.
