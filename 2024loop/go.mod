@@ -3,7 +3,7 @@ module loopVsWhereIn
 go 1.21
 
 require (
-	github.com/jackc/pgx/v5 v5.5.1
+	github.com/jackc/pgx/v5 v5.5.4
 	github.com/kamalshkeir/pgdriver v1.0.0
 	github.com/kokizzu/gotro v1.3601.517
 	github.com/sourcegraph/conc v0.1.0
