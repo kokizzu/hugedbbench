@@ -16,6 +16,14 @@ INSERTED 100K points: ok 100000 (100.0%) in 0.6 sec, 168513.6 rps, ERR: 0
 SEARCHED_RADIUS 200K points: ok 30676 (15.3%) in 50.0 sec, 613.5 rps, points 15338000, 500.0 points/req ERR: 0
 MOVING 5K points: ok 5000 (100.0%) in 0.1 sec, 55088.4 rps, ERR: 0
 
+-- KEYDB (16 threads)
+
+INSERTED 100K points: ok 100000 (100.0%) in 1.3 sec, 79842.2 rps, ERR: 0
+SEARCHED_RADIUS 200K points: ok 8382 (4.2%) in 50.0 sec, 167.6 rps, points 4191000, 500.0 points/req ERR: 0
+MOVING 5K points: ok 5000 (100.0%) in 0.1 sec, 50415.5 rps, ERR: 0
+
+RAM: 36 MB  
+  
 -- POSTGRES (without index)
 
 INSERTED 100K points: ok 100000 (100.0%) in 9.4 sec, 10639.7 rps, ERR: 0
