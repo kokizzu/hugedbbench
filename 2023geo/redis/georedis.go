@@ -10,16 +10,17 @@ import (
 	geo "hugedbbench/2023geo"
 )
 
-// garnet: dotnet restore && cd main/GarnetServer && dotnet run -c Release -f net8.0
+// garnet: dotnet restore && cd main/GarnetServer && dotnet run -c Release -f net8.0 # use port 3278
 // dragonflydb: docker run --network=host --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly # must disable clientCaching
 // keydb: docker run --name some-keydb2 -p 6379:6379 -d eqalpha/keydb keydb-server /etc/keydb/keydb.conf --server-threads 4
 // kvrocks: docker run -it -p 6379:6666 apache/kvrocks
 
 func main() {
 	cli, err := rueidis.NewClient(rueidis.ClientOption{
-		InitAddress: []string{`127.0.0.1:6379`},
+		InitAddress: []string{`127.0.0.1:3278`},
 		Password:    ``,
-		//DisableCache: true, // for dragonflydb, kvrocks
+		//AlwaysRESP2:  true, // for garnet
+		//DisableCache: true, // for dragonflydb, kvrocks, garnet
 	})
 	L.PanicIf(err, `rueidis.NewClient`)
 	defer cli.Close()
