@@ -29,7 +29,7 @@ require (
 	github.com/typesense/typesense-go v0.4.0
 	github.com/ydb-platform/ydb-go-sdk/v3 v3.21.0
 	go.uber.org/atomic v1.11.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 )
 
 require (
