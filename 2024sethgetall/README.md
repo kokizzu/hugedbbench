@@ -31,8 +31,4 @@ INSERT 10k user session 1140.26 ms
 8770 rps
 SELECT 10k 20x user session 18461.86 ms
 10833 rps, failed: 0
-   
-Tarantool 3.1
-
-Vinyl Engine   
 ```
