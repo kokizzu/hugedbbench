@@ -52,7 +52,7 @@ HGETALL 10k 20x user session 748.57 ms
 DEL 10k user session 725.20 ms
   
 
-Tarantool 2.11
+Tarantool 2.11 + go-tarantool
   
 Vinyl Engine  
  
@@ -62,7 +62,18 @@ SELECT 10k 20x user session 1361.17 ms
 146933 rps, failed: 0
 
 
-Tarantool 3.1
+Tarantool 2.11 + go-tarantool/v2
+
+Vinyl Engine
+  
+INSERT 10k user session, 100 thread 50.74 ms
+197089 rps
+
+SELECT 10k 20x user session 689.60 ms
+290022 rps, failed: 0
+     
+
+Tarantool 3.1 + go-tarantool/v2
 
 Vinyl Engine
 
@@ -70,6 +81,5 @@ INSERT 10k user session, 100 thread 39.13 ms
 255569 rps
 
 SELECT 10k 20x user session 567.16 ms
-352632 rps, failed: 0
-        
+352632 rps, failed: 0 
 ```
