@@ -2,28 +2,20 @@ package main
 
 import (
 	"fmt"
-	"github.com/kokizzu/gotro/D/Tt"
-	"github.com/kokizzu/gotro/L"
-	"github.com/tarantool/go-tarantool"
-	"hugedbbench/2021mq/tarantoolAsQ/mFoo"
-	"hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo"
-	"hugedbbench/2021mq/tarantoolAsQ/mFoo/wcFoo"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo"
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo/rqFoo"
+	"hugedbbench/2021mq/tarantoolAsQ/mFoo/wcFoo"
+
+	"github.com/kokizzu/gotro/D/Tt"
+	"github.com/tarantool/go-tarantool/v2"
 )
 
 func ConnectTarantool() *tarantool.Connection {
-	hostPort := fmt.Sprintf(`%s:%s`,
-		`127.0.0.1`,
-		`3301`,
-	)
-	taran, err := tarantool.Connect(hostPort, tarantool.Opts{
-		User: `guest`,
-		Pass: ``,
-	})
-	L.PanicIf(err, `tarantool.Connect `+hostPort)
-	return taran
+	return Tt.Connect1(`127.0.0.1`, `3301`, `guest`, ``)
 }
 
 // then use it like this:

@@ -60,4 +60,16 @@ INSERT 10k user session, 100 thread 82.82 ms
 120737 rps
 SELECT 10k 20x user session 1361.17 ms
 146933 rps, failed: 0
+
+
+Tarantool 3.1
+
+Vinyl Engine
+
+INSERT 10k user session, 100 thread 39.13 ms
+255569 rps
+
+SELECT 10k 20x user session 567.16 ms
+352632 rps, failed: 0
+        
 ```

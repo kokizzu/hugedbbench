@@ -12,9 +12,11 @@ func (p *PointsSg) FindNearestPoints(_ float64, limit int64) []PointsSg {
 	if L.IsError(err, `PointsSg.FindOffsetLimit failed: `+p.SpaceName()) {
 		return rows
 	}
-	for _, row := range res.Tuples() {
+	for _, row := range res {
 		item := PointsSg{}
-		rows = append(rows, *item.FromArray(row))
+		if row, ok := row.([]any); ok {
+			rows = append(rows, *item.FromArray(row))
+		}
 	}
 	return rows
 }

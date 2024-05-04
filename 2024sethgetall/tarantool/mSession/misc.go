@@ -1,11 +1,8 @@
 package mSession
 
 import (
-	"fmt"
-
 	. "github.com/kokizzu/gotro/D/Tt"
-	"github.com/kokizzu/gotro/L"
-	"github.com/tarantool/go-tarantool"
+	"github.com/tarantool/go-tarantool/v2"
 )
 
 func Migrate(taran *Adapter) {
@@ -13,14 +10,5 @@ func Migrate(taran *Adapter) {
 }
 
 func ConnectTarantool() *tarantool.Connection {
-	hostPort := fmt.Sprintf(`%s:%d`,
-		`127.0.0.1`,
-		3301,
-	)
-	taran, err := tarantool.Connect(hostPort, tarantool.Opts{
-		User: `user`,
-		Pass: `password`,
-	})
-	L.PanicIf(err, `failed to connect to tarantool`)
-	return taran
+	return Connect1(`127.0.0.1`, `3301`, `user1`, `password1`)
 }
