@@ -2,9 +2,12 @@ package testcase
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
+	"github.com/alitto/pond"
+	"github.com/kokizzu/gotro/L"
 	"github.com/kokizzu/gotro/S"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -69,4 +72,42 @@ func ReadSessionByt(sessionKey string, value []byte) (session Session, valid boo
 		return session, true
 	}
 	return Session{}, false
+}
+
+func RunInsert(label string, lambda func(i int) string) (keys []string) {
+	keys = make([]string, 0, UserCount)
+	start := time.Now()
+	pool := pond.New(100, UserCount)
+	for i := range UserCount {
+		pool.Submit(func() {
+			sessionKey := lambda(i + 1)
+			if sessionKey != `` {
+				keys = append(keys, sessionKey)
+			}
+		})
+	}
+	pool.StopAndWait()
+	L.TIMETRACK_MIN_DURATION = 0
+	ms := L.TimeTrack(start, label+` 10k user session, 100 thread`)
+	fmt.Printf("%.0f rps\n", UserCount/ms*1000)
+	return keys
+}
+
+func RunSearch(label string, keys []string, lambda func(sessionKey string) bool) {
+	start := time.Now()
+	failCount := 0
+	pool := pond.New(100, RequestCount)
+	for range RequestCount {
+		i := rand.Intn(len(keys)) // assume this is per request
+		sessionKey := keys[i]
+		pool.Submit(func() {
+			if !lambda(sessionKey) {
+				failCount++
+			}
+		})
+	}
+	pool.StopAndWait()
+	fmt.Println()
+	ms := L.TimeTrack(start, label+` 10k 20x user session`)
+	fmt.Printf("%.0f rps, failed: %d\n", RequestCount/ms*1000, failCount)
 }

@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 	"time"
 
 	"hugedbbench/2024sethgetall/testcase"
@@ -32,41 +30,27 @@ func main() {
 
 	ctx := context.Background()
 
-	var failCount int32
-	keys := make([]string, 0, testcase.UserCount)
-
 	// SET
-	start := time.Now()
-	for i := range testcase.UserCount {
+	keys := testcase.RunInsert(`SET`, func(i int) string {
 		sessionKey, byt := testcase.CreateSessionByt(i)
 		b := cli.B().Set().Key(sessionKey).Value(string(byt)).ExSeconds(testcase.ExpireSec).Build()
 		resp := cli.Do(ctx, b)
 		L.IsError(resp.Error(), `failed to SET`, sessionKey)
-		keys = append(keys, sessionKey)
-	}
-	ms := L.TimeTrack(start, `SET 10k user session`)
-	fmt.Printf("%.0f rps\n", testcase.UserCount/ms*1000)
+		return sessionKey
+	})
 
 	// GET
-	start = time.Now()
-	for range testcase.RequestCount {
-		i := rand.Intn(len(keys)) // assume this is per request
-		sessionKey := keys[i]
+	testcase.RunSearch(`GET`, keys, func(sessionKey string) bool {
 		b := cli.B().Get().Key(sessionKey).Build()
 		byt, err := cli.Do(ctx, b).AsBytes()
 		if L.IsError(err, `failed to GET`, sessionKey) {
-			continue
+			return false
 		}
 		session, valid := testcase.ReadSessionByt(sessionKey, byt)
-		if session.Id == 0 || !valid {
-			failCount++
-		}
-	}
-	ms = L.TimeTrack(start, `GET 10k 20x user session`)
-	fmt.Printf("%.0f rps, failed: %d\n", testcase.RequestCount/ms*1000, failCount)
-
+		return session.Id != 0 && valid
+	})
 	// DEL
-	start = time.Now()
+	start := time.Now()
 	for _, sessionKey := range keys {
 		b := cli.B().Del().Key(sessionKey).Build()
 		resp := cli.Do(ctx, b)
@@ -75,10 +59,7 @@ func main() {
 	L.TimeTrack(start, `DEL 10k user session`)
 
 	// HSET
-	failCount = 0
-	keys = keys[:0]
-	start = time.Now()
-	for i := range testcase.UserCount {
+	keys = testcase.RunInsert(`HSET+TTL`, func(i int) string {
 		sessionKey, session := testcase.CreateSession(i)
 		b2 := cli.B().Hset().Key(sessionKey).FieldValue().
 			FieldValue(`id`, I.ToS(session.Id)).
@@ -94,20 +75,15 @@ func main() {
 		b = cli.B().Expire().Key(sessionKey).Seconds(testcase.ExpireSec).Build()
 		resp = cli.Do(ctx, b)
 		L.IsError(resp.Error(), `failed to EXPIRE`, sessionKey)
-		keys = append(keys, sessionKey)
-	}
-	ms = L.TimeTrack(start, `HSET 10k user session`)
-	fmt.Printf("%.0f rps\n", testcase.UserCount/ms*1000)
+		return sessionKey
+	})
 
 	// HGETALL
-	start = time.Now()
-	for range testcase.RequestCount {
-		i := rand.Intn(len(keys)) // assume this is per request
-		sessionKey := keys[i]
+	testcase.RunSearch(`HGETALL`, keys, func(sessionKey string) bool {
 		b := cli.B().Hgetall().Key(sessionKey).Build()
 		rows, err := cli.Do(ctx, b).AsStrMap()
 		if L.IsError(err, `failed to HGETALL`, sessionKey) {
-			continue
+			return false
 		}
 		session := testcase.Session{Permission: map[string]bool{}}
 		for key, value := range rows {
@@ -122,12 +98,8 @@ func main() {
 				}
 			}
 		}
-		if session.Id == 0 {
-			failCount++
-		}
-	}
-	ms = L.TimeTrack(start, `HGETALL 10k 20x user session`)
-	fmt.Printf("%.0f rps, failed: %d\n", testcase.RequestCount/ms*1000, failCount)
+		return session.Id != 0
+	})
 
 	// DEL
 	start = time.Now()

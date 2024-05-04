@@ -1,10 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
-	"time"
-
 	"hugedbbench/2023geo/tarantool/mPoints"
 	"hugedbbench/2024sethgetall/tarantool/mSession"
 	"hugedbbench/2024sethgetall/tarantool/mSession/rqSession"
@@ -29,10 +25,7 @@ func main() {
 
 	tt.TruncateTable(mSession.TableSessions)
 
-	keys := make([]string, 0, testcase.UserCount)
-
-	start := time.Now()
-	for i := range testcase.UserCount {
+	keys := testcase.RunInsert(`INSERT`, func(i int) string {
 		sessionKey, session := testcase.CreateSession(i)
 		sess := wcSession.NewSessionsMutator(tt)
 		sess.Id = uint64(i)
@@ -43,23 +36,15 @@ func main() {
 		if !sess.DoInsert() {
 			L.Print(`failed to insert`, sess)
 		}
-		keys = append(keys, sessionKey)
-	}
-	ms := L.TimeTrack(start, `INSERT 10k user session`)
-	fmt.Printf("%.0f rps\n", testcase.UserCount/ms*1000)
+		return sessionKey
+	})
 
-	start = time.Now()
-	failCount := 0
-	for range testcase.RequestCount {
-		i := rand.Intn(len(keys)) // assume this is per request
-		sessionKey := keys[i]
-
+	testcase.RunSearch(`SELECT`, keys, func(sessionKey string) bool {
 		sess := rqSession.NewSessions(tt)
 		sess.SessionKey = sessionKey
 
 		if !sess.FindBySessionKey() {
-			failCount++
-			continue
+			return false
 		}
 		session := sess.ToSession()
 		if sess.ExpiredAt > fastime.Now().Unix() {
@@ -67,7 +52,6 @@ func main() {
 			session.Id = 0
 		}
 		_ = session
-	}
-	ms = L.TimeTrack(start, `SELECT 10k 20x user session`)
-	fmt.Printf("%.0f rps, failed: %d\n", testcase.RequestCount/ms*1000, failCount)
+		return true
+	})
 }
