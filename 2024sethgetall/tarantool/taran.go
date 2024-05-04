@@ -61,7 +61,12 @@ func main() {
 			failCount++
 			continue
 		}
-		_ = sess.ToSession()
+		session := sess.ToSession()
+		if sess.ExpiredAt > fastime.Now().Unix() {
+			// expired
+			session.Id = 0
+		}
+		_ = session
 	}
 	ms = L.TimeTrack(start, `SELECT 10k 20x user session`)
 	fmt.Printf("%.0f rps, failed: %d\n", testcase.RequestCount/ms*1000, failCount)
