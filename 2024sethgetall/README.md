@@ -18,8 +18,21 @@ DEL 10k user session 687.93 ms
 
 Tarantool 2.10
 
+MemTx Engine
+  
 INSERT 10k user session 1209.11 ms
 8271 rps
 SELECT 10k 20x user session 19216.86 ms
 10408 rps, failed: 0
+
+Vinyl Engine
+
+INSERT 10k user session 1140.26 ms
+8770 rps
+SELECT 10k 20x user session 18461.86 ms
+10833 rps, failed: 0
+   
+Tarantool 3.1
+
+Vinyl Engine   
 ```

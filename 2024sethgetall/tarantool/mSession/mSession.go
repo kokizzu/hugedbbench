@@ -28,7 +28,7 @@ var Tables = map[TableName]*TableProp{
 			{`sessionKey`, String},
 		},
 		AutoIncrementId: false,
-		Engine:          Memtx,
+		Engine:          Vinyl, //Memtx,
 		Unique1:         `sessionKey`,
 	},
 }

@@ -1,9 +1,6 @@
-version: '3.2'
-
 services:
   tarantool1:
-    image: tarantool/tarantool:2.10 # 2.10.4
-    # x.x.0 = alpha, x.x.1 = beta, x.x.2+ = stable, latest not always stable
+    image: tarantool/tarantool:2.11 # 3.0 invalid credentials
     environment:
       TARANTOOL_USER_NAME: "user"
       TARANTOOL_USER_PASSWORD: "password"
