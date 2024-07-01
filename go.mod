@@ -9,7 +9,7 @@ require (
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
 	github.com/fabiolb/fabio v1.5.15
 	github.com/go-sql-driver/mysql v1.8.1
-	github.com/gofiber/fiber/v2 v2.52.1
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/hashicorp/consul/api v1.7.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/kokizzu/ch-timed-buffer v1.2025.1416
