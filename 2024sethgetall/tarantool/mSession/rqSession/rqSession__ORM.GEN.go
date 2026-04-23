@@ -10,7 +10,6 @@ import (
 	`github.com/kokizzu/gotro/A`
 	`github.com/kokizzu/gotro/D/Tt`
 	`github.com/kokizzu/gotro/L`
-	`github.com/kokizzu/gotro/X`
 )
 
 //go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file rqSession__ORM.GEN.go
@@ -49,14 +48,13 @@ func (s *Sessions) UniqueIndexSessionKey() string { //nolint:dupl false positive
 
 // FindBySessionKey Find one by SessionKey
 func (s *Sessions) FindBySessionKey() bool { //nolint:dupl false positive
-	res, err := s.Adapter.Connection.Do(
+	res, err := s.Adapter.RetryDo(
 		tarantool.NewSelectRequest(s.SpaceName()).
 		Index(s.UniqueIndexSessionKey()).
-		Offset(0).
 		Limit(1).
 		Iterator(tarantool.IterEq).
-		Key(A.X{s.SessionKey}),
-	).Get()
+		Key(tarantool.StringKey{S:s.SessionKey}),
+	)
 	if L.IsError(err, `Sessions.FindBySessionKey failed: `+s.SpaceName()) {
 		return false
 	}
@@ -183,14 +181,13 @@ func (s *Sessions) FromUncensoredArray(a A.X) *Sessions { //nolint:dupl false po
 // FindOffsetLimit returns slice of struct, order by idx, eg. .UniqueIndex*()
 func (s *Sessions) FindOffsetLimit(offset, limit uint32, idx string) []Sessions { //nolint:dupl false positive
 	var rows []Sessions
-	res, err := s.Adapter.Connection.Do(
+	res, err := s.Adapter.RetryDo(
 		tarantool.NewSelectRequest(s.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).Get()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `Sessions.FindOffsetLimit failed: `+s.SpaceName()) {
 		return rows
 	}
@@ -207,14 +204,13 @@ func (s *Sessions) FindOffsetLimit(offset, limit uint32, idx string) []Sessions 
 // FindArrOffsetLimit returns as slice of slice order by idx eg. .UniqueIndex*()
 func (s *Sessions) FindArrOffsetLimit(offset, limit uint32, idx string) ([]A.X, Tt.QueryMeta) { //nolint:dupl false positive
 	var rows []A.X
-	resp, err := s.Adapter.Connection.Do(
+	resp, err := s.Adapter.RetryDoResp(
 		tarantool.NewSelectRequest(s.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).GetResponse()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `Sessions.FindOffsetLimit failed: `+s.SpaceName()) {
 		return rows, Tt.QueryMetaFrom(resp, err)
 	}

@@ -45,14 +45,13 @@ func (f *Foo) UniqueIndexId() string { //nolint:dupl false positive
 
 // FindById Find one by Id
 func (f *Foo) FindById() bool { //nolint:dupl false positive
-	res, err := f.Adapter.Connection.Do(
+	res, err := f.Adapter.RetryDo(
 		tarantool.NewSelectRequest(f.SpaceName()).
 		Index(f.UniqueIndexId()).
-		Offset(0).
 		Limit(1).
 		Iterator(tarantool.IterEq).
-		Key(A.X{f.Id}),
-	).Get()
+		Key(tarantool.UintKey{I:uint(f.Id)}),
+	)
 	if L.IsError(err, `Foo.FindById failed: `+f.SpaceName()) {
 		return false
 	}
@@ -135,14 +134,13 @@ func (f *Foo) FromUncensoredArray(a A.X) *Foo { //nolint:dupl false positive
 // FindOffsetLimit returns slice of struct, order by idx, eg. .UniqueIndex*()
 func (f *Foo) FindOffsetLimit(offset, limit uint32, idx string) []Foo { //nolint:dupl false positive
 	var rows []Foo
-	res, err := f.Adapter.Connection.Do(
+	res, err := f.Adapter.RetryDo(
 		tarantool.NewSelectRequest(f.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).Get()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `Foo.FindOffsetLimit failed: `+f.SpaceName()) {
 		return rows
 	}
@@ -159,14 +157,13 @@ func (f *Foo) FindOffsetLimit(offset, limit uint32, idx string) []Foo { //nolint
 // FindArrOffsetLimit returns as slice of slice order by idx eg. .UniqueIndex*()
 func (f *Foo) FindArrOffsetLimit(offset, limit uint32, idx string) ([]A.X, Tt.QueryMeta) { //nolint:dupl false positive
 	var rows []A.X
-	resp, err := f.Adapter.Connection.Do(
+	resp, err := f.Adapter.RetryDoResp(
 		tarantool.NewSelectRequest(f.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).GetResponse()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `Foo.FindOffsetLimit failed: `+f.SpaceName()) {
 		return rows, Tt.QueryMetaFrom(resp, err)
 	}

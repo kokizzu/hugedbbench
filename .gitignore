@@ -37,3 +37,5 @@ redisearchdata/*
 typesensedata/*
 2022fts/manticoresearch/manticoresearchdata/
 2022fts/redisearch/redisearchdata/
+.codex
+third_party

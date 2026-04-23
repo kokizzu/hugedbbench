@@ -3,27 +3,26 @@ package wcSession
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
 
 import (
-	"hugedbbench/2024sethgetall/tarantool/mSession/rqSession"
+	`hugedbbench/2024sethgetall/tarantool/mSession/rqSession`
 
-	"github.com/tarantool/go-tarantool/v2"
+	`github.com/tarantool/go-tarantool/v2`
 
-	"github.com/kokizzu/gotro/A"
-	"github.com/kokizzu/gotro/D/Tt"
-	"github.com/kokizzu/gotro/L"
-	"github.com/kokizzu/gotro/M"
-	"github.com/kokizzu/gotro/S"
+	`github.com/kokizzu/gotro/A`
+	`github.com/kokizzu/gotro/D/Tt`
+	`github.com/kokizzu/gotro/L`
+	`github.com/kokizzu/gotro/M`
+	`github.com/kokizzu/gotro/S`
 )
 
-// SessionsMutator DAO writer/command struct
-//
 //go:generate gomodifytags -all -add-tags json,form,query,long,msg -transform camelcase --skip-unexported -w -file wcSession__ORM.GEN.go
 //go:generate replacer -afterprefix "Id\" form" "Id,string\" form" type wcSession__ORM.GEN.go
 //go:generate replacer -afterprefix "json:\"id\"" "json:\"id,string\"" type wcSession__ORM.GEN.go
 //go:generate replacer -afterprefix "By\" form" "By,string\" form" type wcSession__ORM.GEN.go
+// SessionsMutator DAO writer/command struct
 type SessionsMutator struct {
 	rqSession.Sessions
 	mutations *tarantool.Operations
-	logs      []A.X
+	logs	  []A.X
 }
 
 // NewSessionsMutator create new ORM writer/command object
@@ -49,25 +48,13 @@ func (s *SessionsMutator) ClearMutations() { //nolint:dupl false positive
 	s.logs = []A.X{}
 }
 
-// func (s *SessionsMutator) DoUpsert() bool { //nolint:dupl false positive
-//	arr := s.ToArray()
-//	_, err := s.Adapter.Upsert(s.SpaceName(), arr, A.X{
-//		A.X{`=`, 0, s.Id},
-//		A.X{`=`, 1, s.Email},
-//		A.X{`=`, 2, s.Permission},
-//		A.X{`=`, 3, s.ExpiredAt},
-//		A.X{`=`, 4, s.SessionKey},
-//	})
-//	return !L.IsError(err, `Sessions.DoUpsert failed: `+s.SpaceName()+ `\n%#v`, arr)
-// }
-
 // DoOverwriteBySessionKey update all columns, error if not exists, not using mutations/Set*
 func (s *SessionsMutator) DoOverwriteBySessionKey() bool { //nolint:dupl false positive
-	_, err := s.Adapter.Connection.Do(tarantool.NewUpdateRequest(s.SpaceName()).
+	_, err := s.Adapter.RetryDo(tarantool.NewUpdateRequest(s.SpaceName()).
 		Index(s.UniqueIndexSessionKey()).
-		Key(A.X{s.SessionKey}).
+		Key(tarantool.StringKey{S:s.SessionKey}).
 		Operations(s.ToUpdateArray()),
-	).Get()
+	)
 	return !L.IsError(err, `Sessions.DoOverwriteBySessionKey failed: `+s.SpaceName())
 }
 
@@ -76,33 +63,33 @@ func (s *SessionsMutator) DoUpdateBySessionKey() bool { //nolint:dupl false posi
 	if !s.HaveMutation() {
 		return true
 	}
-	_, err := s.Adapter.Connection.Do(
+	_, err := s.Adapter.RetryDo(
 		tarantool.NewUpdateRequest(s.SpaceName()).
-			Index(s.UniqueIndexSessionKey()).
-			Key(A.X{s.SessionKey}).
-			Operations(s.mutations),
-	).Get()
+		Index(s.UniqueIndexSessionKey()).
+		Key(tarantool.StringKey{S:s.SessionKey}).
+		Operations(s.mutations),
+	)
 	return !L.IsError(err, `Sessions.DoUpdateBySessionKey failed: `+s.SpaceName())
 }
 
 // DoDeletePermanentBySessionKey permanent delete
 func (s *SessionsMutator) DoDeletePermanentBySessionKey() bool { //nolint:dupl false positive
-	_, err := s.Adapter.Connection.Do(
+	_, err := s.Adapter.RetryDo(
 		tarantool.NewDeleteRequest(s.SpaceName()).
-			Index(s.UniqueIndexSessionKey()).
-			Key(A.X{s.SessionKey}),
-	).Get()
+		Index(s.UniqueIndexSessionKey()).
+		Key(tarantool.StringKey{S:s.SessionKey}),
+	)
 	return !L.IsError(err, `Sessions.DoDeletePermanentBySessionKey failed: `+s.SpaceName())
 }
 
 // DoInsert insert, error if already exists
 func (s *SessionsMutator) DoInsert() bool { //nolint:dupl false positive
 	arr := s.ToArray()
-	_, err := s.Adapter.Connection.Do(
+	_, err := s.Adapter.RetryDo(
 		tarantool.NewInsertRequest(s.SpaceName()).
-			Tuple(arr),
-	).Get()
-	return !L.IsError(err, `Sessions.DoInsert failed: `+s.SpaceName()+`\n%#v`, arr)
+		Tuple(arr),
+	)
+	return !L.IsError(err, `Sessions.DoInsert failed: `+s.SpaceName() + `\n%#v`, arr)
 }
 
 // DoUpsert upsert, insert or overwrite, will error only when there's unique secondary key being violated
@@ -110,11 +97,11 @@ func (s *SessionsMutator) DoInsert() bool { //nolint:dupl false positive
 // previous name: DoReplace
 func (s *SessionsMutator) DoUpsert() bool { //nolint:dupl false positive
 	arr := s.ToArray()
-	_, err := s.Adapter.Connection.Do(
+	_, err := s.Adapter.RetryDo(
 		tarantool.NewReplaceRequest(s.SpaceName()).
-			Tuple(arr),
-	).Get()
-	return !L.IsError(err, `Sessions.DoUpsert failed: `+s.SpaceName()+`\n%#v`, arr)
+		Tuple(arr),
+	)
+	return !L.IsError(err, `Sessions.DoUpsert failed: `+s.SpaceName() + `\n%#v`, arr)
 }
 
 // SetId create mutations, should not duplicate
@@ -204,3 +191,4 @@ func (s *SessionsMutator) SetAll(from rqSession.Sessions, excludeMap, forceMap M
 }
 
 // DO NOT EDIT, will be overwritten by github.com/kokizzu/D/Tt/tarantool_orm_generator.go
+

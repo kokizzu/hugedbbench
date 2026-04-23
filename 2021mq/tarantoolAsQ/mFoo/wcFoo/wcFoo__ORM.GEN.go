@@ -50,11 +50,11 @@ func (f *FooMutator) ClearMutations() { //nolint:dupl false positive
 
 // DoOverwriteById update all columns, error if not exists, not using mutations/Set*
 func (f *FooMutator) DoOverwriteById() bool { //nolint:dupl false positive
-	_, err := f.Adapter.Connection.Do(tarantool.NewUpdateRequest(f.SpaceName()).
+	_, err := f.Adapter.RetryDo(tarantool.NewUpdateRequest(f.SpaceName()).
 		Index(f.UniqueIndexId()).
-		Key(A.X{f.Id}).
+		Key(tarantool.UintKey{I:uint(f.Id)}).
 		Operations(f.ToUpdateArray()),
-	).Get()
+	)
 	return !L.IsError(err, `Foo.DoOverwriteById failed: `+f.SpaceName())
 }
 
@@ -63,41 +63,32 @@ func (f *FooMutator) DoUpdateById() bool { //nolint:dupl false positive
 	if !f.HaveMutation() {
 		return true
 	}
-	_, err := f.Adapter.Connection.Do(
+	_, err := f.Adapter.RetryDo(
 		tarantool.NewUpdateRequest(f.SpaceName()).
 		Index(f.UniqueIndexId()).
-		Key(A.X{f.Id}).
+		Key(tarantool.UintKey{I:uint(f.Id)}).
 		Operations(f.mutations),
-	).Get()
+	)
 	return !L.IsError(err, `Foo.DoUpdateById failed: `+f.SpaceName())
 }
 
 // DoDeletePermanentById permanent delete
 func (f *FooMutator) DoDeletePermanentById() bool { //nolint:dupl false positive
-	_, err := f.Adapter.Connection.Do(
+	_, err := f.Adapter.RetryDo(
 		tarantool.NewDeleteRequest(f.SpaceName()).
 		Index(f.UniqueIndexId()).
-		Key(A.X{f.Id}),
-	).Get()
+		Key(tarantool.UintKey{I:uint(f.Id)}),
+	)
 	return !L.IsError(err, `Foo.DoDeletePermanentById failed: `+f.SpaceName())
 }
-
-// func (f *FooMutator) DoUpsert() bool { //nolint:dupl false positive
-//	arr := f.ToArray()
-//	_, err := f.Adapter.Upsert(f.SpaceName(), arr, A.X{
-//		A.X{`=`, 0, f.Id},
-//		A.X{`=`, 1, f.When},
-//	})
-//	return !L.IsError(err, `Foo.DoUpsert failed: `+f.SpaceName()+ `\n%#v`, arr)
-// }
 
 // DoInsert insert, error if already exists
 func (f *FooMutator) DoInsert() bool { //nolint:dupl false positive
 	arr := f.ToArray()
-	row, err := f.Adapter.Connection.Do(
+	row, err := f.Adapter.RetryDo(
 		tarantool.NewInsertRequest(f.SpaceName()).
 		Tuple(arr),
-	).Get()
+	)
 	if err == nil {
 		if len(row) > 0 {
 			if cells, ok := row[0].([]any); ok && len(cells) > 0 {
@@ -109,22 +100,18 @@ func (f *FooMutator) DoInsert() bool { //nolint:dupl false positive
 }
 
 // DoUpsert upsert, insert or overwrite, will error only when there's unique secondary key being violated
-// replace = upsert, only error when there's unique secondary key
+// tarantool's replace/upsert can only match by primary key
 // previous name: DoReplace
 func (f *FooMutator) DoUpsert() bool { //nolint:dupl false positive
-	arr := f.ToArray()
-	row, err := f.Adapter.Connection.Do(
-		tarantool.NewReplaceRequest(f.SpaceName()).
-		Tuple(arr),
-	).Get()
-	if err == nil {
-		if len(row) > 0 {
-			if cells, ok := row[0].([]any); ok && len(cells) > 0 {
-				f.Id = X.ToU(cells[0])
-			}
-		}
+	if f.Id > 0 {
+		return f.DoUpdateById()
 	}
-	return !L.IsError(err, `Foo.DoUpsert failed: `+f.SpaceName()+ `\n%#v`, arr)
+	return f.DoInsert()
+}
+
+// DoUpsertById kept as compatibility alias for newer generated callers
+func (f *FooMutator) DoUpsertById() bool { //nolint:dupl false positive
+	return f.DoUpsert()
 }
 
 // SetId create mutations, should not duplicate

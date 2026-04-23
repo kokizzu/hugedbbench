@@ -51,11 +51,11 @@ func (p *PointsSgMutator) ClearMutations() { //nolint:dupl false positive
 
 // DoOverwriteById update all columns, error if not exists, not using mutations/Set*
 func (p *PointsSgMutator) DoOverwriteById() bool { //nolint:dupl false positive
-	_, err := p.Adapter.Connection.Do(tarantool.NewUpdateRequest(p.SpaceName()).
+	_, err := p.Adapter.RetryDo(tarantool.NewUpdateRequest(p.SpaceName()).
 		Index(p.UniqueIndexId()).
-		Key(A.X{p.Id}).
+		Key(tarantool.UintKey{I:uint(p.Id)}).
 		Operations(p.ToUpdateArray()),
-	).Get()
+	)
 	return !L.IsError(err, `PointsSg.DoOverwriteById failed: `+p.SpaceName())
 }
 
@@ -64,41 +64,32 @@ func (p *PointsSgMutator) DoUpdateById() bool { //nolint:dupl false positive
 	if !p.HaveMutation() {
 		return true
 	}
-	_, err := p.Adapter.Connection.Do(
+	_, err := p.Adapter.RetryDo(
 		tarantool.NewUpdateRequest(p.SpaceName()).
 		Index(p.UniqueIndexId()).
-		Key(A.X{p.Id}).
+		Key(tarantool.UintKey{I:uint(p.Id)}).
 		Operations(p.mutations),
-	).Get()
+	)
 	return !L.IsError(err, `PointsSg.DoUpdateById failed: `+p.SpaceName())
 }
 
 // DoDeletePermanentById permanent delete
 func (p *PointsSgMutator) DoDeletePermanentById() bool { //nolint:dupl false positive
-	_, err := p.Adapter.Connection.Do(
+	_, err := p.Adapter.RetryDo(
 		tarantool.NewDeleteRequest(p.SpaceName()).
 		Index(p.UniqueIndexId()).
-		Key(A.X{p.Id}),
-	).Get()
+		Key(tarantool.UintKey{I:uint(p.Id)}),
+	)
 	return !L.IsError(err, `PointsSg.DoDeletePermanentById failed: `+p.SpaceName())
 }
-
-// func (p *PointsSgMutator) DoUpsert() bool { //nolint:dupl false positive
-//	arr := p.ToArray()
-//	_, err := p.Adapter.Upsert(p.SpaceName(), arr, A.X{
-//		A.X{`=`, 0, p.Id},
-//		A.X{`=`, 1, p.Coord},
-//	})
-//	return !L.IsError(err, `PointsSg.DoUpsert failed: `+p.SpaceName()+ `\n%#v`, arr)
-// }
 
 // DoInsert insert, error if already exists
 func (p *PointsSgMutator) DoInsert() bool { //nolint:dupl false positive
 	arr := p.ToArray()
-	row, err := p.Adapter.Connection.Do(
+	row, err := p.Adapter.RetryDo(
 		tarantool.NewInsertRequest(p.SpaceName()).
 		Tuple(arr),
-	).Get()
+	)
 	if err == nil {
 		if len(row) > 0 {
 			if cells, ok := row[0].([]any); ok && len(cells) > 0 {
@@ -110,22 +101,18 @@ func (p *PointsSgMutator) DoInsert() bool { //nolint:dupl false positive
 }
 
 // DoUpsert upsert, insert or overwrite, will error only when there's unique secondary key being violated
-// replace = upsert, only error when there's unique secondary key
+// tarantool's replace/upsert can only match by primary key
 // previous name: DoReplace
 func (p *PointsSgMutator) DoUpsert() bool { //nolint:dupl false positive
-	arr := p.ToArray()
-	row, err := p.Adapter.Connection.Do(
-		tarantool.NewReplaceRequest(p.SpaceName()).
-		Tuple(arr),
-	).Get()
-	if err == nil {
-		if len(row) > 0 {
-			if cells, ok := row[0].([]any); ok && len(cells) > 0 {
-				p.Id = X.ToU(cells[0])
-			}
-		}
+	if p.Id > 0 {
+		return p.DoUpdateById()
 	}
-	return !L.IsError(err, `PointsSg.DoUpsert failed: `+p.SpaceName()+ `\n%#v`, arr)
+	return p.DoInsert()
+}
+
+// DoUpsertById kept as compatibility alias for newer generated callers
+func (p *PointsSgMutator) DoUpsertById() bool { //nolint:dupl false positive
+	return p.DoUpsert()
 }
 
 // SetId create mutations, should not duplicate

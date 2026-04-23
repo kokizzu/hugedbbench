@@ -45,14 +45,13 @@ func (p *PointsSg) UniqueIndexId() string { //nolint:dupl false positive
 
 // FindById Find one by Id
 func (p *PointsSg) FindById() bool { //nolint:dupl false positive
-	res, err := p.Adapter.Connection.Do(
+	res, err := p.Adapter.RetryDo(
 		tarantool.NewSelectRequest(p.SpaceName()).
 		Index(p.UniqueIndexId()).
-		Offset(0).
 		Limit(1).
 		Iterator(tarantool.IterEq).
-		Key(A.X{p.Id}),
-	).Get()
+		Key(tarantool.UintKey{I:uint(p.Id)}),
+	)
 	if L.IsError(err, `PointsSg.FindById failed: `+p.SpaceName()) {
 		return false
 	}
@@ -140,14 +139,13 @@ func (p *PointsSg) FromUncensoredArray(a A.X) *PointsSg { //nolint:dupl false po
 // FindOffsetLimit returns slice of struct, order by idx, eg. .UniqueIndex*()
 func (p *PointsSg) FindOffsetLimit(offset, limit uint32, idx string) []PointsSg { //nolint:dupl false positive
 	var rows []PointsSg
-	res, err := p.Adapter.Connection.Do(
+	res, err := p.Adapter.RetryDo(
 		tarantool.NewSelectRequest(p.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).Get()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `PointsSg.FindOffsetLimit failed: `+p.SpaceName()) {
 		return rows
 	}
@@ -164,14 +162,13 @@ func (p *PointsSg) FindOffsetLimit(offset, limit uint32, idx string) []PointsSg 
 // FindArrOffsetLimit returns as slice of slice order by idx eg. .UniqueIndex*()
 func (p *PointsSg) FindArrOffsetLimit(offset, limit uint32, idx string) ([]A.X, Tt.QueryMeta) { //nolint:dupl false positive
 	var rows []A.X
-	resp, err := p.Adapter.Connection.Do(
+	resp, err := p.Adapter.RetryDoResp(
 		tarantool.NewSelectRequest(p.SpaceName()).
 		Index(idx).
 		Offset(offset).
 		Limit(limit).
-		Iterator(tarantool.IterAll).
-		Key(A.X{}),
-	).GetResponse()
+		Iterator(tarantool.IterAll),
+	)
 	if L.IsError(err, `PointsSg.FindOffsetLimit failed: `+p.SpaceName()) {
 		return rows, Tt.QueryMetaFrom(resp, err)
 	}
