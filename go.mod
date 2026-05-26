@@ -120,7 +120,7 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/opencontainers/runc v1.2.5 // indirect
+	github.com/opencontainers/runc v1.2.8 // indirect
 	github.com/openhistogram/circonusllhist v0.4.1 // indirect
 	github.com/orcaman/concurrent-map v1.0.0 // indirect
 	github.com/ory/dockertest/v3 v3.12.0 // indirect
