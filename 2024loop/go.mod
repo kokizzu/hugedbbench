@@ -94,3 +94,10 @@ require (
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+exclude (
+	github.com/docker/docker v20.10.7+incompatible
+	github.com/docker/docker v24.0.7+incompatible
+)
+
+exclude github.com/gofiber/fiber/v2 v2.51.0

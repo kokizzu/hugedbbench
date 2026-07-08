@@ -37,3 +37,13 @@ require (
 	golang.org/x/text v0.38.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+exclude github.com/docker/docker v20.10.22+incompatible
+
+exclude github.com/docker/cli v20.10.22+incompatible
+
+exclude github.com/opencontainers/runc v1.1.4
+
+exclude github.com/gofiber/fiber/v2 v2.34.0
+
+exclude github.com/shamaton/msgpack/v2 v2.1.1
