@@ -11,7 +11,7 @@ require (
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
 	github.com/fabiolb/fabio v1.6.6
 	github.com/go-sql-driver/mysql v1.8.1
-	github.com/gofiber/fiber/v2 v2.52.13
+	github.com/gofiber/fiber/v2 v2.52.14
 	github.com/hashicorp/consul/api v1.32.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/kokizzu/ch-timed-buffer v1.2025.1416
@@ -31,7 +31,7 @@ require (
 	github.com/ydb-platform/ydb-go-sdk/v3 v3.134.2
 	go.uber.org/atomic v1.11.0
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f
-	golang.org/x/net v0.52.0
+	golang.org/x/net v0.55.0
 )
 
 require (
@@ -120,7 +120,7 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/opencontainers/runc v1.2.8 // indirect
+	github.com/opencontainers/runc v1.3.6 // indirect
 	github.com/openhistogram/circonusllhist v0.4.1 // indirect
 	github.com/orcaman/concurrent-map v1.0.0 // indirect
 	github.com/ory/dockertest/v3 v3.12.0 // indirect
@@ -154,10 +154,10 @@ require (
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/crypto v0.51.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/grpc v1.79.3 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
