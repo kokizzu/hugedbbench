@@ -137,7 +137,7 @@ require (
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tarantool/go-iproto v1.1.0 // indirect
 	github.com/tg123/go-htpasswd v1.2.3 // indirect
-	github.com/tv42/httpunix v0.0.0-20191220191345-2ba4b9c3382c // indirect
+	github.com/tv42/httpunix v0.0.0-20191220191345-2ba4b61c822 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v0.0.0-20211127185622-3b34db0c6d1e // indirect
 	github.com/twmb/go-rbtree v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
@@ -159,7 +159,7 @@ require (
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
-	google.golang.org/grpc v1.83.1 // indirect
+	google.golang.org/grpc v1.83.2 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
