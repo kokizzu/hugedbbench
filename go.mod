@@ -137,7 +137,7 @@ require (
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/tarantool/go-iproto v1.1.0 // indirect
 	github.com/tg123/go-htpasswd v1.2.3 // indirect
-	github.com/tv42/httpunix v0.0.0-20191220191345-2ba4b61c822 // indirect
+	github.com/tv42/httpunix v0.0.0-20191220191345-2ba4b9c3382c // indirect
 	github.com/twmb/franz-go/pkg/kmsg v0.0.0-20211127185622-3b34db0c6d1e // indirect
 	github.com/twmb/go-rbtree v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
