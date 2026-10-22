@@ -1,6 +1,6 @@
 module hugedbbench
 
-go 1.25.0
+go 1.26.10
 
 replace github.com/kokizzu/gotro => ./third_party/gotro
 
