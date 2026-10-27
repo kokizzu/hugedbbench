@@ -9,7 +9,7 @@ require (
 	github.com/RediSearch/redisearch-go v1.1.1
 	github.com/alitto/pond v1.9.2
 	github.com/expectedsh/go-sonic v0.0.0-20210827144320-d31eb03ae288
-	github.com/fabiolb/fabio v1.6.6
+	github.com/fabiolb/fabio v1.7.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gofiber/fiber/v2 v2.52.14
 	github.com/hashicorp/consul/api v1.32.0
@@ -111,7 +111,7 @@ require (
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/moby/api v1.54.2 // indirect
 	github.com/moby/moby/client v0.4.1 // indirect
-	github.com/moby/sys/user v0.4.0 // indirect
+	github.com/moby/sys/user v0.4.1 // indirect
 	github.com/moby/term v0.5.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nats-io/nkeys v0.4.6 // indirect
